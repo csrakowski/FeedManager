@@ -192,6 +192,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="OrleansConfiguration.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

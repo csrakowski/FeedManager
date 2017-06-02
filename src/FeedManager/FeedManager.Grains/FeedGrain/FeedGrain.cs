@@ -13,7 +13,7 @@ namespace FeedManager.Grains
     /// The FeedGrain is responsible for managing the state of a single, external rss/atom feed.
     /// Depending on the endpoint, it will either subscribe to an event or just periodically poll the feed for new items
     /// </summary>
-    [StorageProvider(ProviderName = "store1")]
+    [StorageProvider(ProviderName = "MemoryStore")]
     public class FeedGrain : Grain<FeedGrainState>, IFeedGrain
     {
         private IDisposable _timerHandle;
@@ -21,6 +21,17 @@ namespace FeedManager.Grains
         public override Task OnActivateAsync()
         {
             _timerHandle = RegisterTimer(PollFeedAsync, null, TimeSpan.FromSeconds(15), TimeSpan.FromMinutes(15));
+
+            //Init state when needed
+            if (this.State.FeedItems == null)
+            {
+                this.State.FeedItems = new Dictionary<string, SyndicationItem>();
+            }
+
+            if (this.State.Subscribers == null)
+            {
+                this.State.Subscribers = new HashSet<Guid>();
+            }
 
             return TaskDone.Done;
         }
@@ -32,7 +43,7 @@ namespace FeedManager.Grains
             return TaskDone.Done;
         }
 
-        public async Task<bool> RegisterForUpdatesAsync(Guid aggregatedFeedId)
+        public async Task<bool> SubscribeToUpdatesAsync(Guid aggregatedFeedId)
         {
             var newlyAdded = State.Subscribers.Add(aggregatedFeedId);
 
@@ -41,28 +52,18 @@ namespace FeedManager.Grains
             return newlyAdded;
         }
 
-        public async Task<bool> SetOrUpdateFeedAsync(string feedUrl)
+        public async Task<bool> UnsubscribeFromUpdatesAsync(Guid aggregatedFeedId)
         {
-            if (feedUrl == null)
-                throw new ArgumentNullException(nameof(feedUrl));
-
-            var isSame = (State.FeedUrl == feedUrl);
-
-            State.FeedUrl = feedUrl;
+            var wasRemoved = State.Subscribers.Remove(aggregatedFeedId);
 
             await WriteStateAsync();
 
-            return isSame;
+            return wasRemoved;
         }
 
         private async Task PollFeedAsync(object arg)
         {
-            var feedUrl = State.FeedUrl;
-            if (String.IsNullOrWhiteSpace(feedUrl))
-            {
-                //Should never happen, but better safe than really sorry!
-                return;
-            }
+            var feedUrl = this.GetPrimaryKeyString();
 
             var newFeedItems = new List<SyndicationItem>();
 

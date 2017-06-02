@@ -18,7 +18,7 @@ namespace FeedManager.SiloHost
         public OrleansHostWrapper(string[] args)
         {
             ParseArguments(args);
-            Init();
+            Init("OrleansConfiguration.xml");
         }
 
         public bool Run()
@@ -70,8 +70,9 @@ namespace FeedManager.SiloHost
             return ok;
         }
 
-        private void Init()
+        private void Init(string configFile)
         {
+            siloHost.ConfigFileName = configFile;
             siloHost.LoadOrleansConfig();
         }
 

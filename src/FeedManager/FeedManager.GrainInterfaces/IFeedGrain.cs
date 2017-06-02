@@ -7,9 +7,9 @@ namespace FeedManager.GrainInterfaces
     /// <summary>
     /// Grain interface IFeedGrain
     /// </summary>
-    public interface IFeedGrain : IGrainWithGuidKey
+    public interface IFeedGrain : IGrainWithStringKey
     {
-        Task<bool> SetOrUpdateFeedAsync(string feedUrl);
-        Task<bool> RegisterForUpdatesAsync(Guid aggregatedFeedId);
+        Task<bool> SubscribeToUpdatesAsync(Guid aggregatedFeedId);
+        Task<bool> UnsubscribeFromUpdatesAsync(Guid aggregatedFeedId);
     }
 }

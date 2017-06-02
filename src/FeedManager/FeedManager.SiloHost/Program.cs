@@ -1,5 +1,6 @@
 using System;
-
+using System.Threading.Tasks;
+using FeedManager.GrainInterfaces;
 using Orleans;
 using Orleans.Runtime.Configuration;
 
@@ -28,7 +29,24 @@ namespace FeedManager.SiloHost
             //       This is the place your custom logic, for example calling client logic
             //       or initializing an HTTP front end for accepting incoming requests.
 
-            Console.WriteLine("Orleans Silo is running.\nPress Enter to terminate...");
+            Console.WriteLine("Orleans Silo is running.");
+
+            Task.Run(async () =>
+            {
+                Console.WriteLine("Getting aggregated feed...");
+
+                var aggregatedFeed = GrainClient.GrainFactory.GetGrain<IAggregatedFeedGrain>(Guid.Empty);
+
+                Console.WriteLine("Registering The Verge");
+                await aggregatedFeed.RegisterNewFeedForAggregationAsync("https://www.theverge.com/rss/index.xml");
+
+                Console.WriteLine("Registering NOS");
+                await aggregatedFeed.RegisterNewFeedForAggregationAsync("http://feeds.nos.nl/nosnieuwsalgemeen");
+
+                Console.WriteLine("Set up complete!");
+            }).Wait();
+
+            Console.WriteLine("\nPress Enter to terminate...");
             Console.ReadLine();
 
             hostDomain.DoCallBack(ShutdownSilo);

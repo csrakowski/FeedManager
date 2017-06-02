@@ -10,7 +10,8 @@ namespace FeedManager.GrainInterfaces
     /// </summary>
     public interface IAggregatedFeedGrain : IGrainWithGuidKey
     {
+        Task<bool> RegisterNewFeedForAggregationAsync(string feedUrl);
         Task AddNewFeedItemsAsync(IEnumerable<SyndicationItem> feedItems);
-        Task<SyndicationFeed> GetAggregatedFeed();
+        Task<SyndicationFeed> GetAggregatedFeedAsync();
     }
 }
