@@ -33,17 +33,17 @@ namespace FeedManager.SiloHost
 
                 if (ok)
                 {
-                    Console.WriteLine(string.Format("Successfully started Orleans silo '{0}' as a {1} node.", siloHost.Name, siloHost.Type));
+                    Console.WriteLine($"Successfully started Orleans silo '{siloHost.Name}' as a {siloHost.Type.ToString()} node.");
                 }
                 else
                 {
-                    throw new SystemException(string.Format("Failed to start Orleans silo '{0}' as a {1} node.", siloHost.Name, siloHost.Type));
+                    throw new SystemException($"Failed to start Orleans silo '{siloHost.Name}' as a {siloHost.Type.ToString()} node.");
                 }
             }
             catch (Exception exc)
             {
                 siloHost.ReportStartupError(exc);
-                var msg = string.Format("{0}:\n{1}\n{2}", exc.GetType().FullName, exc.Message, exc.StackTrace);
+                var msg = $"{exc.GetType().FullName}:\n{exc.Message}\n{exc.StackTrace}";
                 Console.WriteLine(msg);
             }
 
@@ -58,12 +58,12 @@ namespace FeedManager.SiloHost
             {
                 siloHost.StopOrleansSilo();
 
-                Console.WriteLine(string.Format("Orleans silo '{0}' shutdown.", siloHost.Name));
+                Console.WriteLine($"Orleans silo '{siloHost.Name}' shutdown.");
             }
             catch (Exception exc)
             {
                 siloHost.ReportStartupError(exc);
-                var msg = string.Format("{0}:\n{1}\n{2}", exc.GetType().FullName, exc.Message, exc.StackTrace);
+                var msg = $"{exc.GetType().FullName}:\n{exc.Message}\n{exc.StackTrace}";
                 Console.WriteLine(msg);
             }
 
@@ -146,11 +146,11 @@ namespace FeedManager.SiloHost
         public void PrintUsage()
         {
             Console.WriteLine(
-@"USAGE: 
+@"USAGE:
     orleans host [<siloName> [<configFile>]] [DeploymentId=<idString>] [/debug]
 Where:
     <siloName>      - Name of this silo in the Config file list (optional)
-    DeploymentId=<idString> 
+    DeploymentId=<idString>
                     - Which deployment group this host instance should run in (optional)");
         }
 

@@ -33,21 +33,21 @@ namespace FeedManager.Grains
                 this.State.Subscribers = new HashSet<Guid>();
             }
 
-            return TaskDone.Done;
+            return Task.CompletedTask;
         }
 
         public override Task OnDeactivateAsync()
         {
             _timerHandle.Dispose();
 
-            return TaskDone.Done;
+            return Task.CompletedTask;
         }
 
         public async Task<bool> SubscribeToUpdatesAsync(Guid aggregatedFeedId)
         {
             var newlyAdded = State.Subscribers.Add(aggregatedFeedId);
 
-            await WriteStateAsync();
+            await WriteStateAsync().ConfigureAwait(false);
 
             return newlyAdded;
         }
@@ -56,7 +56,7 @@ namespace FeedManager.Grains
         {
             var wasRemoved = State.Subscribers.Remove(aggregatedFeedId);
 
-            await WriteStateAsync();
+            await WriteStateAsync().ConfigureAwait(false);
 
             return wasRemoved;
         }
@@ -82,8 +82,8 @@ namespace FeedManager.Grains
 
             if (newFeedItems.Count > 0)
             {
-                await SendUpdateAsync(newFeedItems);
-                await WriteStateAsync();
+                await SendUpdateAsync(newFeedItems).ConfigureAwait(false);
+                await WriteStateAsync().ConfigureAwait(false);
             }
         }
 
@@ -92,7 +92,7 @@ namespace FeedManager.Grains
             foreach (var subscriberId in State.Subscribers)
             {
                 var subscriber = this.GrainFactory.GetGrain<IAggregatedFeedGrain>(subscriberId);
-                await subscriber.AddNewFeedItemsAsync(feedItems);
+                await subscriber.AddNewFeedItemsAsync(feedItems).ConfigureAwait(false);
             }
         }
     }

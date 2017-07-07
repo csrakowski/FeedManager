@@ -18,12 +18,12 @@ namespace FeedManager.Grains.AggregatedFeedGrain
     {
         public override Task OnActivateAsync()
         {
-            return TaskDone.Done;
+            return Task.CompletedTask;
         }
 
         public override Task OnDeactivateAsync()
         {
-            return TaskDone.Done;
+            return Task.CompletedTask;
         }
 
         public async Task<bool> RegisterNewFeedForAggregationAsync(string feedUrl)
@@ -36,7 +36,7 @@ namespace FeedManager.Grains.AggregatedFeedGrain
 
             var feedGrain = GrainFactory.GetGrain<IFeedGrain>(feedUrl);
             var myKey = this.GetPrimaryKey();
-            await feedGrain.SubscribeToUpdatesAsync(myKey);
+            await feedGrain.SubscribeToUpdatesAsync(myKey).ConfigureAwait(false);
 
             return true;
         }
@@ -46,11 +46,13 @@ namespace FeedManager.Grains.AggregatedFeedGrain
             var logger = GetLogger();
 
             State.SyndicationItems.AddRange(feedItems);
-            await WriteStateAsync();
+            await WriteStateAsync().ConfigureAwait(false);
 
 
             var sb = new StringBuilder();
-            sb.Append($"There are {feedItems.Count()} new items in your feed:\n\n");
+            sb.Append("There are ")
+                .Append(feedItems.Count())
+                .Append(" new items in your feed:\n\n");
 
             foreach (var feedItem in feedItems)
             {
