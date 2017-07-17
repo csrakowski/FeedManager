@@ -1,13 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26430.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedManager.SiloHost", "FeedManager.SiloHost\FeedManager.SiloHost.csproj", "{0DBA1B93-524E-49EF-B443-B3E03BE60D10}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedManager.Grains", "FeedManager.Grains\FeedManager.Grains.csproj", "{0C97604C-ABF5-4E71-9246-3B0E23BBE705}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedManager.GrainInterfaces", "FeedManager.GrainInterfaces\FeedManager.GrainInterfaces.csproj", "{B7D51EE9-ECBD-4D1E-AD33-B0677CC6DC3E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{CB4D9AD2-D49B-492D-8E5A-6D870363FB06}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

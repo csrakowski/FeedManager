@@ -11,7 +11,7 @@ namespace FeedManager.SiloHost
     /// </summary>
     public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             // The Orleans silo environment is initialized in its own app domain in order to more
             // closely emulate the distributed situation, when the client and the server cannot
@@ -31,20 +31,7 @@ namespace FeedManager.SiloHost
 
             Console.WriteLine("Orleans Silo is running.");
 
-            Task.Run(async () =>
-            {
-                Console.WriteLine("Getting aggregated feed...");
-
-                var aggregatedFeed = GrainClient.GrainFactory.GetGrain<IAggregatedFeedGrain>(Guid.Empty);
-
-                Console.WriteLine("Registering The Verge");
-                await aggregatedFeed.RegisterNewFeedForAggregationAsync("https://www.theverge.com/rss/index.xml");
-
-                Console.WriteLine("Registering NOS");
-                await aggregatedFeed.RegisterNewFeedForAggregationAsync("http://feeds.nos.nl/nosnieuwsalgemeen");
-
-                Console.WriteLine("Set up complete!");
-            }).Wait();
+            MainAsync().Wait();
 
             Console.WriteLine("\nPress Enter to terminate...");
             Console.ReadLine();
@@ -52,7 +39,23 @@ namespace FeedManager.SiloHost
             hostDomain.DoCallBack(ShutdownSilo);
         }
 
-        static void InitSilo(string[] args)
+
+        private static async Task MainAsync()
+        {
+            Console.WriteLine("Getting aggregated feed...");
+
+            var aggregatedFeed = GrainClient.GrainFactory.GetGrain<IAggregatedFeedGrain>(Guid.Empty);
+
+            Console.WriteLine("Registering The Verge");
+            await aggregatedFeed.RegisterNewFeedForAggregationAsync("https://www.theverge.com/rss/index.xml");
+
+            Console.WriteLine("Registering NOS");
+            await aggregatedFeed.RegisterNewFeedForAggregationAsync("http://feeds.nos.nl/nosnieuwsalgemeen");
+
+            Console.WriteLine("Set up complete!");
+        }
+
+        private static void InitSilo(string[] args)
         {
             hostWrapper = new OrleansHostWrapper(args);
 
@@ -62,7 +65,7 @@ namespace FeedManager.SiloHost
             }
         }
 
-        static void ShutdownSilo()
+        private static void ShutdownSilo()
         {
             if (hostWrapper != null)
             {
