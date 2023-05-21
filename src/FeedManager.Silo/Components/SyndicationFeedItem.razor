@@ -1,0 +1,33 @@
+﻿@using System.ServiceModel.Syndication;
+
+<MudDivider />
+<MudContainer>
+    <MudText Typo="Typo.subtitle1"><b>@FeedItem.Title</b></MudText>
+    <MudText Typo="Typo.body2">@FeedItem.LastUpdatedTime</MudText>
+
+    <MudText>
+        @FeedItem.Content
+    </MudText>
+
+</MudContainer>
+
+
+@code {
+    [Parameter, EditorRequired]
+    public FeedItem FeedItem { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public EventCallback<bool> OnRead { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        OnMarkAsRead().GetAwaiter().GetResult();
+    }
+
+    Task OnMarkAsRead()
+    {
+        return (OnRead.HasDelegate)
+        ? OnRead.InvokeAsync(true)
+        : Task.CompletedTask;
+    }
+}
