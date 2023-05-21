@@ -5,7 +5,7 @@ using System.ServiceModel.Syndication;
 
 namespace FeedManager.Silo.Pages
 {
-    public sealed partial class AggregatedFeed
+    public sealed partial class Index
     {
         private IEnumerable<FeedItem>? _feedItems;
 
@@ -24,6 +24,11 @@ namespace FeedManager.Silo.Pages
         private Task OnMarkAsRead(bool isRead)
         {
             return Task.CompletedTask;
+        }
+
+        private Task Refresh()
+        {
+            return GetFeedItems();
         }
     }
 }
