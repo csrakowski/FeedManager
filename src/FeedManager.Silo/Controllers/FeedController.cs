@@ -74,6 +74,25 @@ namespace FeedManager.Silo.Controllers
             return result;
         }
 
+        [HttpGet("html")]
+        [ProducesDefaultResponseType(typeof(SyndicationFeed))]
+        public async Task<IActionResult> GetHtmlFeed()
+        {
+            var userId = TryGetUserId();
+
+            if (String.IsNullOrEmpty(userId))
+            {
+                userId = "Chris";
+                //return Unauthorized();
+            }
+
+            var feedItems = await _aggregatedFeedService.GetAllItemsAsync(userId);
+
+            var result = feedItems.ToHtmlContentResult();
+
+            return result;
+        }
+
         private string? TryGetUserId()
         {
             return User?.FindFirstValue(ClaimTypes.NameIdentifier);

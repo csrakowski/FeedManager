@@ -21,15 +21,15 @@ namespace FeedManager.Abstractions
         public Uri ItemAlternateLink { get; }
 
         [Id(4)]
-        public DateTimeOffset LastUpdatedTime { get; }
+        public DateTimeOffset PublishDate { get; }
 
-        public FeedItem(string id, string title, string content, Uri itemAlternateLink, DateTimeOffset lastUpdatedTime)
+        public FeedItem(string id, string title, string content, Uri itemAlternateLink, DateTimeOffset publishDate)
         {
             Id = id;
             Title = title;
             Content = content;
             ItemAlternateLink = itemAlternateLink;
-            LastUpdatedTime = lastUpdatedTime;
+            PublishDate = publishDate;
         }
 
         public static FeedItem FromSyndicationItem(SyndicationItem item)
@@ -50,7 +50,7 @@ namespace FeedManager.Abstractions
                             ? link.Uri
                             : item.BaseUri;
 
-            return new FeedItem(item.Id, item.Title.Text, contentText, linkUri, item.LastUpdatedTime);
+            return new FeedItem(item.Id, item.Title.Text, contentText, linkUri, item.PublishDate);
         }
     }
 }

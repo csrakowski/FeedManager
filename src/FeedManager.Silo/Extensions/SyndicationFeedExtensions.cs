@@ -1,4 +1,5 @@
 ﻿using System.ServiceModel.Syndication;
+using System.Text;
 using System.Xml;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace FeedManager.Silo.Extensions
     {
         public static SyndicationItem ToSyndicationItem(this FeedItem feedItem)
         {
-            return new SyndicationItem(feedItem.Title, feedItem.Content, feedItem.ItemAlternateLink, feedItem.Id, feedItem.LastUpdatedTime);
+            return new SyndicationItem(feedItem.Title, feedItem.Content, feedItem.ItemAlternateLink, feedItem.Id, feedItem.PublishDate);
         }
 
         public static SyndicationFeed ToSyndicationFeed(this IEnumerable<FeedItem> feedItems)
@@ -51,6 +52,51 @@ namespace FeedManager.Silo.Extensions
                 Content = feedString,
                 ContentType = contentType
             };
+        }
+
+        public static ContentResult ToHtmlContentResult(this IEnumerable<FeedItem> feedItems)
+        {
+            var sb = new StringBuilder(@"<!DOCTYPE html><html lang=""en"">
+<head>
+<link href=""https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"" rel=""stylesheet"" integrity=""sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"" crossorigin=""anonymous"">
+<style>
+    img { max-width: 100%; }
+</style>
+</head>
+<body>
+<div class""container text-center"">
+");
+
+            foreach (var item in feedItems)
+            {
+                sb.WriteFeedItem(item);
+            }
+
+            sb.Append(@"</div>
+<script src=""https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"" integrity=""sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"" crossorigin=""anonymous""></script>
+</body></html>");
+
+            var htmlResult = sb.ToString();
+
+            return new ContentResult
+            {
+                Content = htmlResult,
+                ContentType = "text/html"
+            };
+        }
+
+        private static StringBuilder WriteFeedItem(this StringBuilder stringBuilder, FeedItem feedItem)
+        {
+            var encodedId = Convert.ToBase64String(Encoding.UTF8.GetBytes(feedItem.Id));
+
+            stringBuilder.AppendFormat(@"<article id=""{0}"" class=""row align-items-start"">
+<div class=""col-8 offset-2"">
+    <a href=""{1}""><h2>{2}</h2></a>", encodedId, feedItem.ItemAlternateLink, feedItem.Title)
+                .AppendFormat("<div>{0}</div>", feedItem.Content)
+                .AppendFormat("<span>{0}</span>", feedItem.PublishDate)
+                .Append(@"</div></article>");
+
+            return stringBuilder;
         }
     }
 }

@@ -20,6 +20,8 @@
             _logger.LogDebug("Registering The Verge");
             await aggregatedFeed.RegisterNewFeedForAggregationAsync("https://www.theverge.com/rss/index.xml");
 
+            await Task.Delay(15000);
+
             _logger.LogDebug("Registering NOS");
             await aggregatedFeed.RegisterNewFeedForAggregationAsync("https://feeds.nos.nl/nosnieuwsalgemeen");
 

@@ -61,19 +61,30 @@ namespace FeedManager.Grains
             _logger?.LogDebug("{method}", nameof(AddNewFeedItemsAsync));
 
             _state.State.FeedItems.AddRange(feedItems);
+
+            var prePruneCount = _state.State.FeedItems.Count;
+
+            _state.State.FeedItems = _state.State.FeedItems
+                                        .Where(fi => DateTimeOffset.UtcNow.Subtract(fi.PublishDate).TotalDays < _state.State.PruneAfterDays)
+                                        .OrderBy(fi => fi.PublishDate)
+                                        .ToList();
+
             await _state.WriteStateAsync();
 
             var sb = new StringBuilder();
+
             sb.Append("There are ")
                 .Append(feedItems.Count())
-                .Append(" new items in your feed:\n\n");
+                .AppendLine(" new items in your feed:\n");
 
             foreach (var feedItem in feedItems)
             {
                 sb.AppendLine(feedItem.Title)
-                    .Append(feedItem.ItemAlternateLink)
-                    .Append("\n\n");
+                    .AppendLine(feedItem.ItemAlternateLink.ToString())
+                    .AppendLine();
             }
+
+            sb.AppendFormat("Pruned {0} day old content. Started with {1}, ended with {2} items.\n", _state.State.PruneAfterDays, prePruneCount, _state.State.FeedItems.Count);
 
             var logMessage = sb.ToString();
 
