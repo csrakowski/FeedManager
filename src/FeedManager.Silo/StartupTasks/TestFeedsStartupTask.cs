@@ -15,7 +15,7 @@
         {
             _logger.LogDebug("Getting aggregated feed...");
 
-            var aggregatedFeed = _grainFactory.GetGrain<IAggregatedFeedGrain>("");
+            var aggregatedFeed = _grainFactory.GetGrain<IAggregatedFeedGrain>("Chris");
 
             _logger.LogDebug("Registering The Verge");
             await aggregatedFeed.RegisterNewFeedForAggregationAsync("https://www.theverge.com/rss/index.xml");

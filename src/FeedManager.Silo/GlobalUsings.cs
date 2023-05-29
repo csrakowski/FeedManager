@@ -4,8 +4,6 @@
 global using System.Net;
 global using System.Security.Claims;
 global using Microsoft.AspNetCore.Components;
-global using MudBlazor;
-global using MudBlazor.Services;
 global using Orleans.Configuration;
 global using Orleans.Hosting;
 global using Orleans.Runtime;

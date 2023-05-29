@@ -6,34 +6,36 @@ namespace FeedManager.Silo.Services
 {
     public sealed class AggregatedFeedService : BaseClusterService
     {
-        public AggregatedFeedService(
-            IHttpContextAccessor httpContextAccessor, IClusterClient client) :
-            base(httpContextAccessor, client)
+        public AggregatedFeedService(IClusterClient client)
+            : base(client)
         {
         }
 
-        public async Task<IEnumerable<FeedItem>> GetAllItemsAsync()
+        public async Task<IEnumerable<FeedItem>> GetAllItemsAsync(string userId)
         {
-            var key = TryGetUserId();
+            var aggregatedFeedGrain = GetGrain<IAggregatedFeedGrain>(userId);
 
-            if (String.IsNullOrEmpty(key))
-            {
-                return new List<FeedItem>();
-            }
-
-            var aggregatedFeedGrain = GetGrain<IAggregatedFeedGrain>(key);
             var feed = await aggregatedFeedGrain.GetAggregatedFeedAsync();
 
             return feed;
         }
 
-        public async Task<SyndicationFeed> GetSyndicationFeedAsync()
+        public async Task<SyndicationFeed> GetSyndicationFeedAsync(string userId)
         {
-            var feedItems = await GetAllItemsAsync();
+            var feedItems = await GetAllItemsAsync(userId);
 
             var syndicationFeed = feedItems.ToSyndicationFeed();
 
             return syndicationFeed;
+        }
+
+        public async Task<bool> RegisterNewFeedForAggregationAsync(string userId, string feedUrl)
+        {
+            var aggregatedFeedGrain = GetGrain<IAggregatedFeedGrain>(userId);
+
+            var result = await aggregatedFeedGrain.RegisterNewFeedForAggregationAsync(feedUrl);
+
+            return result;
         }
     }
 }

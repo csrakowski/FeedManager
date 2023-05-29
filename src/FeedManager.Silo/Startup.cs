@@ -7,12 +7,9 @@ namespace FeedManager.Silo
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMudServices();
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
             services.AddHttpContextAccessor();
             services.AddSingleton<AggregatedFeedService>();
-            services.AddLocalStorageServices();
+            services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -33,8 +30,7 @@ namespace FeedManager.Silo
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapControllers();
             });
         }
     }
