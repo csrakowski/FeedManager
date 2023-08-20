@@ -22,4 +22,9 @@ RUN dotnet publish "FeedManager.Silo.csproj" -c Release -o /app/publish /p:UseAp
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+#ENV DOTNET_RUNNING_IN_CONTAINER=true
+ENV DOTNET_JitNoMemoryBarriers=1
+ENV DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_HTTP3SUPPORT=1
+
 ENTRYPOINT ["dotnet", "FeedManager.Silo.dll"]
