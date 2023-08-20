@@ -61,10 +61,16 @@ namespace FeedManager.Silo.Extensions
 <link href=""https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"" rel=""stylesheet"" integrity=""sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"" crossorigin=""anonymous"">
 <style>
     img { max-width: 100%; }
+    .card { margin: 1em 0; }
 </style>
 </head>
 <body>
-<div class""container text-center"">
+<div class=""container"">
+    <header>
+        <h2 class=""text-center"">Page generated at: ")
+                .AppendFormat("{0:yyyy-MM-dd HH:mm} UTC", DateTimeOffset.UtcNow)
+                .Append(@"</h2>
+    </header>
 ");
 
             foreach (var item in feedItems)
@@ -89,12 +95,16 @@ namespace FeedManager.Silo.Extensions
         {
             var encodedId = Convert.ToBase64String(Encoding.UTF8.GetBytes(feedItem.Id));
 
-            stringBuilder.AppendFormat(@"<article id=""{0}"" class=""row align-items-start"">
-<div class=""col-8 offset-2"">
-    <a href=""{1}""><h2>{2}</h2></a>", encodedId, feedItem.ItemAlternateLink, feedItem.Title)
-                .AppendFormat("<div>{0}</div>", feedItem.Content)
-                .AppendFormat("<span>{0}</span>", feedItem.PublishDate)
-                .Append(@"</div></article>");
+            stringBuilder.AppendFormat(@"<div class=""row"">
+        <div class=""col-8 offset-2"">
+            <article id=""{0}"" class=""card"">
+                <header class=""card-header"">
+                    <a class=""card-title"" href=""{1}""><h2>{2}</h2></a>
+                </header>
+                <div class=""card-body"">", encodedId, feedItem.ItemAlternateLink, feedItem.Title)
+                    .AppendFormat("<div class=\"card-text\">{0}</div></div>", feedItem.Content)
+                    .AppendFormat("<footer class=\"card-footer text-muted text-right\"><small>Published: {0}</small></footer>", feedItem.PublishDate)
+                    .Append("</article></div></div>");
 
             return stringBuilder;
         }
