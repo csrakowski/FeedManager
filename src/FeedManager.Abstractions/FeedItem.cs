@@ -40,6 +40,10 @@ namespace FeedManager.Abstractions
             {
                 contentText = content.Text;
             }
+            else if(item.Summary is TextSyndicationContent summary)
+            {
+                contentText = summary.Text;
+            }
             else
             {
                 contentText = "";
