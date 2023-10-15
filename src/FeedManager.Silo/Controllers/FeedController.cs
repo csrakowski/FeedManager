@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Net;
 using System.ServiceModel.Syndication;
 using FeedManager.Silo.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -94,7 +95,7 @@ namespace FeedManager.Silo.Controllers
         }
 
         [HttpGet("json")]
-        [ProducesDefaultResponseType(typeof(SyndicationFeed))]
+        [ProducesResponseType(typeof(IEnumerable<FeedItem>), StatusCodes.Status200OK, "application/json")]
         public async Task<IActionResult> GetJsonFeed()
         {
             var userId = TryGetUserId();

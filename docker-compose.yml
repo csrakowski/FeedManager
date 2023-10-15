@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  feedmanager.webclient:
+    image: ${DOCKER_REGISTRY-}feedmanagerwebclient
+    build:
+      context: .
+      dockerfile: src/FeedManager.WebClient/Dockerfile
+
+  feedmanager.silo:
+    image: ${DOCKER_REGISTRY-}feedmanagersilo
+    build:
+      context: .
+      dockerfile: src/FeedManager.Silo/Dockerfile
+
