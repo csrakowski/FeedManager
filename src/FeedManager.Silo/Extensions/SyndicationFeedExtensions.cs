@@ -94,15 +94,13 @@ namespace FeedManager.Silo.Extensions
 
         private static StringBuilder WriteFeedItem(this StringBuilder stringBuilder, FeedItem feedItem)
         {
-            var encodedId = Convert.ToBase64String(Encoding.UTF8.GetBytes(feedItem.Id));
-
             stringBuilder.AppendFormat(@"<div class=""row"">
         <div class=""col-8 offset-2"">
             <article id=""{0}"" class=""card"">
                 <header class=""card-header"">
                     <a class=""card-title"" href=""{1}""><h2>{2}</h2></a>
                 </header>
-                <div class=""card-body"">", encodedId, feedItem.ItemAlternateLink, feedItem.Title)
+                <div class=""card-body"">", feedItem.EncodedId, feedItem.ItemAlternateLink, feedItem.Title)
                     .AppendFormat("<div class=\"card-text\">{0}</div></div>", feedItem.Content)
                     .AppendFormat("<footer class=\"card-footer text-muted text-right\"><small>Published: {0}</small></footer>", feedItem.PublishDate)
                     .Append("</article></div></div>");

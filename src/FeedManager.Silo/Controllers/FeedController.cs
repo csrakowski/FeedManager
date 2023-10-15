@@ -106,7 +106,7 @@ namespace FeedManager.Silo.Controllers
             }
 
             var feedItems = await _aggregatedFeedService.GetAllItemsAsync(userId);
-            return new Microsoft.AspNetCore.Mvc.JsonResult(feedItems);
+            return new JsonResult(feedItems);
         }
 
         private string? TryGetUserId()

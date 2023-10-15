@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT License.
 
-global using System.Net;
 global using System.Security.Claims;
 global using Microsoft.AspNetCore.Components;
 global using Orleans.Configuration;

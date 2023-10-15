@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Text;
@@ -7,6 +8,7 @@ using Orleans;
 
 namespace FeedManager.Abstractions
 {
+    [DebuggerDisplay("{Title}")]
     [GenerateSerializer]
     public class FeedItem
     {
@@ -28,7 +30,7 @@ namespace FeedManager.Abstractions
         [Id(5)]
         public List<string> Authors { get; }
 
-        public string EncodedId => Convert.ToBase64String(Encoding.UTF8.GetBytes(Id));
+        public string EncodedId { get; }
 
         public FeedItem(string id, string title, string content, Uri itemAlternateLink, DateTimeOffset publishDate, List<string> authors)
         {
@@ -38,6 +40,8 @@ namespace FeedManager.Abstractions
             ItemAlternateLink = itemAlternateLink;
             PublishDate = publishDate;
             Authors = authors;
+
+            EncodedId = Convert.ToBase64String(Encoding.UTF8.GetBytes(Id));
         }
 
         public static FeedItem FromSyndicationItem(SyndicationItem item)
