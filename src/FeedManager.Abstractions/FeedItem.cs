@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Syndication;
+using System.Text;
 using Orleans;
 
 namespace FeedManager.Abstractions
@@ -23,13 +25,19 @@ namespace FeedManager.Abstractions
         [Id(4)]
         public DateTimeOffset PublishDate { get; }
 
-        public FeedItem(string id, string title, string content, Uri itemAlternateLink, DateTimeOffset publishDate)
+        [Id(5)]
+        public List<string> Authors { get; }
+
+        public string EncodedId => Convert.ToBase64String(Encoding.UTF8.GetBytes(Id));
+
+        public FeedItem(string id, string title, string content, Uri itemAlternateLink, DateTimeOffset publishDate, List<string> authors)
         {
             Id = id;
             Title = title;
             Content = content;
             ItemAlternateLink = itemAlternateLink;
             PublishDate = publishDate;
+            Authors = authors;
         }
 
         public static FeedItem FromSyndicationItem(SyndicationItem item)
@@ -54,7 +62,17 @@ namespace FeedManager.Abstractions
                             ? link.Uri
                             : item.BaseUri;
 
-            return new FeedItem(item.Id, item.Title.Text, contentText, linkUri, item.PublishDate);
+            var authors = new List<string>();
+            if (item.Authors != null)
+            {
+                authors.AddRange(item.Authors.Select(a => a.Name));
+            }
+            if (item.Contributors != null)
+            {
+                authors.AddRange(item.Contributors.Select(a => a.Name));
+            }
+
+            return new FeedItem(item.Id, item.Title.Text, contentText, linkUri, item.PublishDate, authors);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace FeedManager.Grains
         public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
             _timerHandle = RegisterTimer(asyncCallback: PollFeedAsync,
-                                         state: null,
+                                         state: new Object(),
                                          dueTime: TimeSpan.FromSeconds(15),
                                          period: TimeSpan.FromMinutes(15));
 

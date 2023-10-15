@@ -93,6 +93,22 @@ namespace FeedManager.Silo.Controllers
             return result;
         }
 
+        [HttpGet("json")]
+        [ProducesDefaultResponseType(typeof(SyndicationFeed))]
+        public async Task<IActionResult> GetJsonFeed()
+        {
+            var userId = TryGetUserId();
+
+            if (String.IsNullOrEmpty(userId))
+            {
+                userId = "Chris";
+                //return Unauthorized();
+            }
+
+            var feedItems = await _aggregatedFeedService.GetAllItemsAsync(userId);
+            return new Microsoft.AspNetCore.Mvc.JsonResult(feedItems);
+        }
+
         private string? TryGetUserId()
         {
             return User?.FindFirstValue(ClaimTypes.NameIdentifier);
