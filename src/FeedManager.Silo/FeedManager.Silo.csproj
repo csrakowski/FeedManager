@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsTransformWebConfigDisabled>false</IsTransformWebConfigDisabled>
     <UserSecretsId>93e031e1-12b9-4958-b62e-35599ea0aaa3</UserSecretsId>
