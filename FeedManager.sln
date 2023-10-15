@@ -20,14 +20,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedManager.WPFClient", "src\FeedManager.WPFClient\FeedManager.WPFClient.csproj", "{1D21823F-429F-403E-87F5-7776EC4E88D5}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{FBA83035-F8DB-4B27-9919-1BED9DA06999}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{D5639C2A-CB5B-4B41-ACCA-42AAD4FC6358}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\docker-image.yml = .github\workflows\docker-image.yml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedManager.WebClient", "src\FeedManager.WebClient\FeedManager.WebClient.csproj", "{3801A8B1-0BEA-4EBE-870C-EE0EDD2669C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,10 @@ Global
 		{1424AF70-CB15-41A7-8F6B-A889B22D394A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1424AF70-CB15-41A7-8F6B-A889B22D394A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1424AF70-CB15-41A7-8F6B-A889B22D394A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D21823F-429F-403E-87F5-7776EC4E88D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D21823F-429F-403E-87F5-7776EC4E88D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D21823F-429F-403E-87F5-7776EC4E88D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D21823F-429F-403E-87F5-7776EC4E88D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3801A8B1-0BEA-4EBE-870C-EE0EDD2669C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3801A8B1-0BEA-4EBE-870C-EE0EDD2669C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3801A8B1-0BEA-4EBE-870C-EE0EDD2669C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3801A8B1-0BEA-4EBE-870C-EE0EDD2669C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,12 +15,12 @@ RUN apk upgrade
 # Build stage: Gather all source files needed, and run dotnet build
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
+COPY ["global.json", ""]
+COPY ["Directory.Packages.props", ""]
+COPY ["Directory.Build.props", ""]
 COPY ["src/FeedManager.Silo/FeedManager.Silo.csproj", "src/FeedManager.Silo/"]
 COPY ["src/FeedManager.Abstractions/FeedManager.Abstractions.csproj", "src/FeedManager.Abstractions/"]
 COPY ["src/FeedManager.Grains/FeedManager.Grains.csproj", "src/FeedManager.Grains/"]
-COPY ["Directory.Packages.props", ""]
-COPY ["Directory.Build.props", ""]
-COPY ["global.json", ""]
 RUN dotnet restore "src/FeedManager.Silo/FeedManager.Silo.csproj"
 COPY . .
 WORKDIR "/src/src/FeedManager.Silo"
@@ -37,5 +37,4 @@ RUN dotnet publish "FeedManager.Silo.csproj" -c Release -o /app/publish /p:UseAp
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-
 ENTRYPOINT ["dotnet", "FeedManager.Silo.dll"]
