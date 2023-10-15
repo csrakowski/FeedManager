@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Azure.Identity" Version="1.10.2" />
+    <PackageVersion Include="Microsoft.Orleans.Runtime" Version="7.2.1" />
+    <PackageVersion Include="Microsoft.Orleans.Sdk" Version="7.2.1" />
+    <PackageVersion Include="Microsoft.Orleans.Server" Version="7.2.1" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageVersion Include="System.ServiceModel.Syndication" Version="7.0.0" />
+  </ItemGroup>
+</Project>
