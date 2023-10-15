@@ -19,6 +19,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedManager.WPFClient", "src\FeedManager.WPFClient\FeedManager.WPFClient.csproj", "{1D21823F-429F-403E-87F5-7776EC4E88D5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{FBA83035-F8DB-4B27-9919-1BED9DA06999}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{D5639C2A-CB5B-4B41-ACCA-42AAD4FC6358}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\docker-image.yml = .github\workflows\docker-image.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +51,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FBA83035-F8DB-4B27-9919-1BED9DA06999} = {11BA234D-2EF9-4DA5-89CA-7FAF07ED27B7}
+		{D5639C2A-CB5B-4B41-ACCA-42AAD4FC6358} = {FBA83035-F8DB-4B27-9919-1BED9DA06999}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E2B4C02A-4CF8-4599-8BBD-71338EEF9A1F}
