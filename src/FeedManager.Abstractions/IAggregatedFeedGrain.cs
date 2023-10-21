@@ -12,6 +12,8 @@ namespace FeedManager.Abstractions
     public interface IAggregatedFeedGrain : IGrainWithStringKey
     {
         Task<bool> RegisterNewFeedForAggregationAsync(string feedUrl);
+        Task<bool> DeregisterFeedFromAggregationAsync(string feedUrl);
+        Task<IEnumerable<FeedSubscription>> GetSubscriptions();
         Task AddNewFeedItemsAsync(IEnumerable<FeedItem> feedItems);
         Task<IEnumerable<FeedItem>> GetAggregatedFeedAsync();
     }

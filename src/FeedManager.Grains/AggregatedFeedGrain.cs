@@ -49,9 +49,48 @@ namespace FeedManager.Grains
                 return false;
             }
 
-            var feedGrain = GrainFactory.GetGrain<IFeedGrain>(feedUrl);
             var myKey = this.GetPrimaryKeyString();
+
+            var subscription = _state.State.SubscribedFeeds.Find(sub => String.Equals(sub.Url, feedUrl, StringComparison.OrdinalIgnoreCase));
+            if (subscription != null)
+            {
+                _logger?.LogDebug("User {UserId} is already subscribed to {FeedUrl}", myKey, feedUrl);
+                return false;
+            }
+
+            var feedGrain = GrainFactory.GetGrain<IFeedGrain>(feedUrl);
             await feedGrain.SubscribeToUpdatesAsync(myKey);
+
+            _state.State.SubscribedFeeds.Add(FeedSubscription.FromFeedUrl(feedUrl));
+
+            await _state.WriteStateAsync();
+
+            return true;
+        }
+
+        public async Task<bool> DeregisterFeedFromAggregationAsync(string feedUrl)
+        {
+            if (!Uri.TryCreate(feedUrl, UriKind.Absolute, out var feedUri))
+            {
+                //Should never happen, but still better safe than really sorry!
+                return false;
+            }
+
+            var myKey = this.GetPrimaryKeyString();
+
+            var subscription = _state.State.SubscribedFeeds.Find(sub => String.Equals(sub.Url, feedUrl, StringComparison.OrdinalIgnoreCase));
+            if (subscription == null)
+            {
+                _logger?.LogDebug("User {UserId} isn't subscribed to {FeedUrl} (anymore)", myKey, feedUrl);
+                return false;
+            }
+
+            var feedGrain = GrainFactory.GetGrain<IFeedGrain>(feedUrl);
+            await feedGrain.UnsubscribeFromUpdatesAsync(myKey);
+
+            _state.State.SubscribedFeeds.Remove(subscription);
+
+            await _state.WriteStateAsync();
 
             return true;
         }
@@ -98,6 +137,15 @@ namespace FeedManager.Grains
             var feedItems = _state.State.FeedItems;
 
             return Task.FromResult(feedItems as IEnumerable<FeedItem>);
+        }
+
+        public Task<IEnumerable<FeedSubscription>> GetSubscriptions()
+        {
+            _logger?.LogDebug("{method}", nameof(GetSubscriptions));
+
+            var subscriptions = _state.State.SubscribedFeeds;
+
+            return Task.FromResult(subscriptions as IEnumerable<FeedSubscription>);
         }
     }
 }

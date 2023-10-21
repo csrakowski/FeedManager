@@ -14,5 +14,8 @@ namespace FeedManager.Abstractions
 
         [Id(1)]
         public int PruneAfterDays { get; set; } = 14;
+
+        [Id(3)]
+        public List<FeedSubscription> SubscribedFeeds { get; set; } = new List<FeedSubscription>();
     }
 }

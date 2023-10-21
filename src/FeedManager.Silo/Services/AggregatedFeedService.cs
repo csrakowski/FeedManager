@@ -37,5 +37,23 @@ namespace FeedManager.Silo.Services
 
             return result;
         }
+
+        public async Task<bool> DeregisterFeedFromAggregationAsync(string userId, string feedUrl)
+        {
+            var aggregatedFeedGrain = GetGrain<IAggregatedFeedGrain>(userId);
+
+            var result = await aggregatedFeedGrain.DeregisterFeedFromAggregationAsync(feedUrl);
+
+            return result;
+        }
+
+        public async Task<IEnumerable<FeedSubscription>> GetSubscriptions(string userId)
+        {
+            var aggregatedFeedGrain = GetGrain<IAggregatedFeedGrain>(userId);
+
+            var result = await aggregatedFeedGrain.GetSubscriptions();
+
+            return result;
+        }
     }
 }

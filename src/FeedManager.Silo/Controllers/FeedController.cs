@@ -110,6 +110,22 @@ namespace FeedManager.Silo.Controllers
             return new JsonResult(feedItems);
         }
 
+        [HttpGet("subscriptions")]
+        [ProducesResponseType(typeof(IEnumerable<FeedSubscription>), StatusCodes.Status200OK, "application/json")]
+        public async Task<IActionResult> GetSubscriptions()
+        {
+            var userId = TryGetUserId();
+
+            if (String.IsNullOrEmpty(userId))
+            {
+                userId = "Chris";
+                //return Unauthorized();
+            }
+
+            var subscriptions = await _aggregatedFeedService.GetSubscriptions(userId);
+            return new JsonResult(subscriptions);
+        }
+
         private string? TryGetUserId()
         {
             return User?.FindFirstValue(ClaimTypes.NameIdentifier);

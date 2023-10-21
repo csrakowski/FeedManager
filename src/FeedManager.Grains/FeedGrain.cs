@@ -11,6 +11,7 @@ using System.Xml;
 using System;
 using System.Reflection.Metadata;
 using Microsoft.Extensions.Logging;
+using CSRakowski.Parallel;
 
 namespace FeedManager.Grains
 {
@@ -118,15 +119,14 @@ namespace FeedManager.Grains
             }
         }
 
-        private async Task SendUpdateAsync(IEnumerable<FeedItem> feedItems)
+        private Task SendUpdateAsync(IEnumerable<FeedItem> feedItems)
         {
-            foreach (var subscriberId in _state.State.Subscribers)
-            {
+            return ParallelAsync.ForEachAsync(_state.State.Subscribers, async subscriberId => {
                 _logger?.LogDebug("{method}: {subscriberId}", nameof(SendUpdateAsync), subscriberId);
 
                 var subscriber = GrainFactory.GetGrain<IAggregatedFeedGrain>(subscriberId);
                 await subscriber.AddNewFeedItemsAsync(feedItems);
-            }
+            }, allowOutOfOrderProcessing: true);
         }
     }
 }
