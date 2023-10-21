@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run:
-        docker build . --file src/FeedManager.Silo/Dockerfile --tag feedmanagersilo:$(date +%s)
-        docker build . --file src/FeedManager.WebClient/Dockerfile --tag feedmanagerweb:$(date +%s)
+    - name: Build the Docker image for FeedManager.Silo
+      run: docker build . --file src/FeedManager.Silo/Dockerfile --tag feedmanagersilo:$(date +%s)
+    - name: Build the Docker image for FeedManager.WebClient
+      run: docker build . --file src/FeedManager.WebClient/Dockerfile --tag feedmanagerweb:$(date +%s)
