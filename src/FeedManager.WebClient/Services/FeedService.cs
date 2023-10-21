@@ -58,6 +58,6 @@ public class FeedService
 
     private FeedItem[] Error(string errorMessage)
     {
-        return new[] { new FeedItem("Error", "Error", errorMessage, null, DateTimeOffset.UtcNow, new List<string>(0)) };
+        return new[] { new FeedItem("Error", "Error", errorMessage, new Uri("#", UriKind.Relative), DateTimeOffset.UtcNow, new List<string>(0)) };
     }
 }

@@ -5,8 +5,31 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+    <header>
+        <h2 class="text-center">
+            Page generated at: @DateTimeOffset.UtcNow.ToString("yyyy-MM-dd HH:mm") UTC
+        </h2>
+    </header>
     
     <p>Got @Model.FeedItems.Length Messages</p>
+
+    @foreach (var feedItem in Model.FeedItems)
+    {
+        <div class="row">
+            <div class="col-8 offset-2">
+                <article id="@feedItem.EncodedId" class="card">
+                    <header class="card-header">
+                        <a class="card-title" href="@feedItem.ItemAlternateLink"><h2>@feedItem.Title</h2></a>
+                    </header>
+                    <div class="card-body">
+                        <div class="card-text">@feedItem.Content</div>
+                    </div>
+                    <footer class="card-footer text-muted text-right">
+                        <small>Published: @feedItem.PublishDate</small>
+                    </footer>
+                </article>
+            </div>
+        </div>
+    }
 
 </div>
