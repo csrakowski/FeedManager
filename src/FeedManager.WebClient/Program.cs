@@ -17,6 +17,16 @@ public static class Program
                         .ConfigureHttpClient(client => {
                             var uri = builder.Configuration["FeedService:BaseUrl"];
                             client.BaseAddress = new Uri(uri);
+
+                            client.DefaultRequestVersion = Version.Parse("2.0");
+                        })
+                        .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                        {
+                            ClientCertificateOptions = ClientCertificateOption.Manual,
+                            ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
+                            {
+                                return true;
+                            }
                         });
 
         var app = builder.Build();

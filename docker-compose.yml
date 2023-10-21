@@ -6,10 +6,16 @@ services:
     build:
       context: .
       dockerfile: src/FeedManager.WebClient/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
 
   feedmanager.silo:
     image: ${DOCKER_REGISTRY-}feedmanagersilo
     build:
       context: .
       dockerfile: src/FeedManager.Silo/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
 
