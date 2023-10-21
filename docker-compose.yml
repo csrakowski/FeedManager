@@ -1,21 +1,42 @@
 version: '3.4'
 
 services:
-  feedmanager.webclient:
-    image: ${DOCKER_REGISTRY-}feedmanagerwebclient
-    build:
-      context: .
-      dockerfile: src/FeedManager.WebClient/Dockerfile
-    ports:
-      - "80:80"
-      - "443:443"
-
   feedmanager.silo:
     image: ${DOCKER_REGISTRY-}feedmanagersilo
     build:
       context: .
       dockerfile: src/FeedManager.Silo/Dockerfile
+    volumes:
+      - logvolume01:/var/log/
     ports:
-      - "80:80"
-      - "443:443"
+      - "8443:443"
+    # healthcheck:
+    #   test: curl -f https://localhost/feed/json || exit 1
+    #   interval: 1m30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 40s
+    #   start_interval: 5s
 
+  feedmanager.webclient:
+    image: ${DOCKER_REGISTRY-}feedmanagerwebclient
+    build:
+      context: .
+      dockerfile: src/FeedManager.WebClient/Dockerfile
+    volumes:
+      - logvolume01:/var/log/
+    ports:
+      - "5443:443"
+    # healthcheck:
+    #   test: curl -f https://localhost/ || exit 1
+    #   interval: 1m30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 40s
+    #   start_interval: 5s
+    depends_on:
+      feedmanager.silo:
+        condition: service_started
+
+volumes:
+  logvolume01: {}
