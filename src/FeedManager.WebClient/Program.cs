@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT License.
 
+using FeedManager.WebClient.Services;
+
 namespace FeedManager.WebClient;
 
 public static class Program
@@ -11,6 +13,11 @@ public static class Program
 
         // Add services to the container.
         builder.Services.AddRazorPages();
+        builder.Services.AddHttpClient<FeedService>()
+                        .ConfigureHttpClient(client => {
+                            var uri = builder.Configuration["FeedService:BaseUrl"];
+                            client.BaseAddress = new Uri(uri);
+                        });
 
         var app = builder.Build();
 
