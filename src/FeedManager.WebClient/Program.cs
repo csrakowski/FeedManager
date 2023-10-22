@@ -29,6 +29,7 @@ public static class Program
                                 return true;
                             }
                         });
+        builder.Services.AddHealthChecks();
 
         var app = builder.Build();
 
@@ -48,6 +49,8 @@ public static class Program
         app.UseAuthorization();
 
         app.MapRazorPages();
+
+        app.MapHealthChecks("/healthCheck");
 
         app.Run();
     }

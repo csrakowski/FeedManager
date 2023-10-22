@@ -10,6 +10,7 @@ namespace FeedManager.Silo
             services.AddHttpContextAccessor();
             services.AddSingleton<AggregatedFeedService>();
             services.AddControllers();
+            services.AddHealthChecks();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -32,6 +33,8 @@ namespace FeedManager.Silo
             {
                 endpoints.MapControllers();
             });
+
+            app.UseHealthChecks("/healthCheck");
         }
     }
 }

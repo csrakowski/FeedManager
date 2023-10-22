@@ -7,11 +7,11 @@ services:
       context: .
       dockerfile: src/FeedManager.Silo/Dockerfile
     volumes:
-      - logvolume01:/var/log/
+      - lv_silo:/var/log/
     ports:
       - "8443:443"
     # healthcheck:
-    #   test: curl -f https://localhost/feed/json || exit 1
+    #   test: curl -f https://localhost/healthCheck || exit 1
     #   interval: 1m30s
     #   timeout: 10s
     #   retries: 3
@@ -24,11 +24,11 @@ services:
       context: .
       dockerfile: src/FeedManager.WebClient/Dockerfile
     volumes:
-      - logvolume01:/var/log/
+      - lv_webclient:/var/log/
     ports:
       - "5443:443"
     # healthcheck:
-    #   test: curl -f https://localhost/ || exit 1
+    #   test: curl -f https://localhost/healthCheck || exit 1
     #   interval: 1m30s
     #   timeout: 10s
     #   retries: 3
@@ -39,4 +39,5 @@ services:
         condition: service_started
 
 volumes:
-  logvolume01: {}
+  lv_silo: {}
+  lv_webclient: {}
