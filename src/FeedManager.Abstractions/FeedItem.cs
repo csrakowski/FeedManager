@@ -30,9 +30,13 @@ namespace FeedManager.Abstractions
         [Id(5)]
         public List<string> Authors { get; }
 
-        public string EncodedId { get; }
+        [Id(6)]
+        public string FeedId { get; }
 
-        public FeedItem(string id, string title, string content, Uri itemAlternateLink, DateTimeOffset publishDate, List<string> authors)
+        public string EncodedId => EncodingHelper.EncodeId(Id);
+        public string EncodedFeedId => EncodingHelper.EncodeId(FeedId);
+
+        public FeedItem(string id, string title, string content, Uri itemAlternateLink, DateTimeOffset publishDate, List<string> authors, string feedId)
         {
             Id = id;
             Title = title;
@@ -40,11 +44,10 @@ namespace FeedManager.Abstractions
             ItemAlternateLink = itemAlternateLink;
             PublishDate = publishDate;
             Authors = authors;
-
-            EncodedId = Convert.ToBase64String(Encoding.UTF8.GetBytes(Id));
+            FeedId = feedId;
         }
 
-        public static FeedItem FromSyndicationItem(SyndicationItem item)
+        public static FeedItem FromSyndicationItem(SyndicationItem item, string feedId)
         {
             string contentText;
 
@@ -76,7 +79,7 @@ namespace FeedManager.Abstractions
                 authors.AddRange(item.Contributors.Select(a => a.Name));
             }
 
-            return new FeedItem(item.Id, item.Title.Text, contentText, linkUri, item.PublishDate, authors);
+            return new FeedItem(item.Id, item.Title.Text, contentText, linkUri, item.PublishDate, authors, feedId);
         }
     }
 }

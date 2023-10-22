@@ -18,7 +18,8 @@ public static class Program
                             var uri = builder.Configuration["FeedService:BaseUrl"];
                             client.BaseAddress = new Uri(uri);
 
-                            client.DefaultRequestVersion = Version.Parse("2.0");
+                            client.DefaultRequestVersion = System.Net.HttpVersion.Version30;
+                            client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
                         })
                         .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
                         {

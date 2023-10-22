@@ -58,6 +58,8 @@ namespace FeedManager.Grains
 
             await _state.WriteStateAsync();
 
+            await SendExistingItemsAsync(aggregatedFeedId);
+
             _logger?.LogDebug("{method}: {aggregatedFeedId}. Result: {newlyAdded}", nameof(SubscribeToUpdatesAsync), aggregatedFeedId, newlyAdded);
 
             return newlyAdded;
@@ -103,7 +105,7 @@ namespace FeedManager.Grains
                     {
                         _logger?.LogDebug("Found new SyndicationItem: {feedKey}", feedKey);
 
-                        var feedItem = FeedItem.FromSyndicationItem(syndicationItems);
+                        var feedItem = FeedItem.FromSyndicationItem(syndicationItems, feedUrl);
                         newFeedItems.Add(feedItem);
                         _state.State.FeedItems.Add(feedKey, feedItem);
                     }
@@ -127,6 +129,20 @@ namespace FeedManager.Grains
                 var subscriber = GrainFactory.GetGrain<IAggregatedFeedGrain>(subscriberId);
                 await subscriber.AddNewFeedItemsAsync(feedItems);
             }, allowOutOfOrderProcessing: true);
+        }
+
+        private Task SendExistingItemsAsync(string subscriberId)
+        {
+            _logger?.LogDebug("{method}: {subscriberId}", nameof(SendExistingItemsAsync), subscriberId);
+
+            var feedItems = _state.State.FeedItems.Values;
+            if (feedItems == null || feedItems.Count == 0)
+            {
+                return Task.CompletedTask;
+            }
+
+            var subscriber = GrainFactory.GetGrain<IAggregatedFeedGrain>(subscriberId);
+            return subscriber.AddNewFeedItemsAsync(feedItems);
         }
     }
 }

@@ -51,7 +51,8 @@ namespace FeedManager.Grains
 
             var myKey = this.GetPrimaryKeyString();
 
-            var subscription = _state.State.SubscribedFeeds.Find(sub => String.Equals(sub.Url, feedUrl, StringComparison.OrdinalIgnoreCase));
+            var encodedUrl = EncodingHelper.EncodeId(feedUrl);
+            var subscription = _state.State.SubscribedFeeds.Find(sub => String.Equals(sub.EncodedId, encodedUrl));
             if (subscription != null)
             {
                 _logger?.LogDebug("User {UserId} is already subscribed to {FeedUrl}", myKey, feedUrl);
@@ -78,7 +79,8 @@ namespace FeedManager.Grains
 
             var myKey = this.GetPrimaryKeyString();
 
-            var subscription = _state.State.SubscribedFeeds.Find(sub => String.Equals(sub.Url, feedUrl, StringComparison.OrdinalIgnoreCase));
+            var encodedUrl = EncodingHelper.EncodeId(feedUrl);
+            var subscription = _state.State.SubscribedFeeds.Find(sub => String.Equals(sub.EncodedId, encodedUrl));
             if (subscription == null)
             {
                 _logger?.LogDebug("User {UserId} isn't subscribed to {FeedUrl} (anymore)", myKey, feedUrl);
@@ -89,6 +91,11 @@ namespace FeedManager.Grains
             await feedGrain.UnsubscribeFromUpdatesAsync(myKey);
 
             _state.State.SubscribedFeeds.Remove(subscription);
+
+            _state.State.FeedItems = _state.State.FeedItems
+                                        .Where(fi => fi.EncodedFeedId != encodedUrl)
+                                        .OrderBy(fi => fi.PublishDate)
+                                        .ToList();
 
             await _state.WriteStateAsync();
 

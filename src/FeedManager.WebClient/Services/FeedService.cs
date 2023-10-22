@@ -17,13 +17,16 @@ public class FeedService
         _httpClient = httpClient;
     }
 
-    public async Task<FeedItem[]> Get()
+    public async Task<FeedItem[]> Get(string username)
     {
         try
         {
             _logger.LogDebug("Calling feed...");
 
-            var response = await _httpClient.GetAsync("feed/json");
+            var request = new HttpRequestMessage(HttpMethod.Get, "feed/json");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("UserId", username);
+
+            var response = await _httpClient.SendAsync(request);
 
             _logger.LogDebug("Got response with StatusCode: {StatusCode}", response.StatusCode);
 
@@ -58,6 +61,6 @@ public class FeedService
 
     private FeedItem[] Error(string errorMessage)
     {
-        return new[] { new FeedItem("Error", "Error", errorMessage, new Uri("#", UriKind.Relative), DateTimeOffset.UtcNow, new List<string>(0)) };
+        return new[] { new FeedItem("Error", "Error", errorMessage, new Uri("#", UriKind.Relative), DateTimeOffset.UtcNow, new List<string>(0), "") };
     }
 }

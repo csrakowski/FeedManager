@@ -128,7 +128,18 @@ namespace FeedManager.Silo.Controllers
 
         private string? TryGetUserId()
         {
-            return User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            var claimId = User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!String.IsNullOrEmpty(claimId))
+                return claimId;
+
+            var authorization = Request.Headers.Authorization.FirstOrDefault(sv => sv?.StartsWith("UserId") == true);
+            if (!String.IsNullOrEmpty(authorization))
+            {
+                var userId = authorization.Replace("UserId", "").Trim();
+                return userId;
+            }
+
+            return null;
         }
     }
 }

@@ -23,6 +23,6 @@ public class IndexModel : PageModel
 
     public async Task OnGet()
     {
-        FeedItems = await _feedService.Get();
+        FeedItems = await _feedService.Get("Chris");
     }
 }
