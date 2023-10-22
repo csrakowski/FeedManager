@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT License.
 
+using Serilog;
+
 namespace FeedManager.Silo
 {
     public sealed class Startup
@@ -11,10 +13,13 @@ namespace FeedManager.Silo
             services.AddSingleton<AggregatedFeedService>();
             services.AddControllers();
             services.AddHealthChecks();
+            services.AddSerilog();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSerilogRequestLogging();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -29,12 +34,14 @@ namespace FeedManager.Silo
             app.UseStaticFiles();
             app.UseRouting();
 
+            app.UseHealthChecks("/healthCheck");
+
+            app.Map("/dashboard", x => x.UseOrleansDashboard());
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-
-            app.UseHealthChecks("/healthCheck");
         }
     }
 }

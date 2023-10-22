@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: src/FeedManager.Silo/Dockerfile
     volumes:
-      - lv_silo:/var/log/
+      - lv_silo:/log/
     ports:
       - "8443:443"
     # healthcheck:
@@ -24,7 +24,7 @@ services:
       context: .
       dockerfile: src/FeedManager.WebClient/Dockerfile
     volumes:
-      - lv_webclient:/var/log/
+      - lv_webclient:/log/
     ports:
       - "5443:443"
     # healthcheck:

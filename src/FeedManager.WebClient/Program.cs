@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using FeedManager.WebClient.Services;
+using Serilog;
 
 namespace FeedManager.WebClient;
 
@@ -9,9 +10,16 @@ public static class Program
 {
     public static void Main(string[] args)
     {
+        Log.Logger = new LoggerConfiguration()
+                            .Enrich.FromLogContext()
+                            .WriteTo.Console()
+                            .WriteTo.Debug()
+                            .CreateBootstrapLogger();
+
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+        builder.Services.AddSerilog();
         builder.Services.AddRazorPages();
         builder.Services.AddHttpClient<FeedService>()
                         .ConfigureHttpClient(client => {
@@ -31,7 +39,15 @@ public static class Program
                         });
         builder.Services.AddHealthChecks();
 
+        builder.Host.UseSerilog((context, services, configuration) => configuration
+                    .ReadFrom.Configuration(context.Configuration)
+                    .ReadFrom.Services(services)
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console());
+
         var app = builder.Build();
+
+        app.UseSerilogRequestLogging();
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())

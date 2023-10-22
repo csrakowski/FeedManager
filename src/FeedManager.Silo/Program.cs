@@ -1,8 +1,10 @@
 using System;
 using FeedManager.Silo.StartupTasks;
 using Orleans;
+using Orleans.Hosting;
 using Orleans.Runtime;
 using Orleans.Runtime.Development;
+using Serilog;
 
 namespace FeedManager.Silo
 {
@@ -10,6 +12,12 @@ namespace FeedManager.Silo
     {
         public static async Task<int> Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                            .Enrich.FromLogContext()
+                            .WriteTo.Console()
+                            .WriteTo.Debug()
+                            .CreateBootstrapLogger();
+
             var hostBuilder = BuildHost(args);
             await hostBuilder.RunConsoleAsync();
 
@@ -19,12 +27,27 @@ namespace FeedManager.Silo
         private static IHostBuilder BuildHost(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
+                        .UseSerilog((context, services, configuration) =>
+                            configuration
+                                .ReadFrom.Configuration(context.Configuration)
+                                .ReadFrom.Services(services)
+                                .Enrich.FromLogContext()
+                                .WriteTo.Console()
+                        )
                         .UseOrleans((context, builder) =>
                         {
                             builder.UseLocalhostClustering()
                                 .AddMemoryGrainStorage("feedmanager")
-                                //.UseInMemoryReminderService()
                                 .AddStartupTask<TestFeedsStartupTask>();
+
+                            builder.ConfigureLogging(lb =>
+                            {
+                                lb.AddSerilog();
+                            });
+
+                            builder.UseInMemoryReminderService();
+
+                            builder.UseDashboard();
                         })
                         .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
         }
