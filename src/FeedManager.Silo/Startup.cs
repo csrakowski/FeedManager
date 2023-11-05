@@ -13,7 +13,6 @@ namespace FeedManager.Silo
             services.AddSingleton<AggregatedFeedService>();
             services.AddControllers();
             services.AddHealthChecks();
-            services.AddSerilog();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
