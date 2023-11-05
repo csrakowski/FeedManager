@@ -64,9 +64,9 @@ public static class Program
 
         app.UseAuthorization();
 
-        app.MapRazorPages();
-
         app.MapHealthChecks("/healthCheck");
+
+        app.MapRazorPages();
 
         app.Run();
     }
