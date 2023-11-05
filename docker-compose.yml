@@ -10,13 +10,13 @@ services:
       - lv_silo:/log/
     ports:
       - "8443:443"
-    # healthcheck:
-    #   test: wget --no-verbose --tries=1 --spider https://localhost/healthCheck || exit 1
-    #   interval: 1m30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 40s
-    #   start_interval: 5s
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+      start_interval: 5s
 
   feedmanager.webclient:
     image: ${DOCKER_REGISTRY-}feedmanagerwebclient
@@ -28,7 +28,7 @@ services:
     ports:
       - "5443:443"
     # healthcheck:
-    #   test: wget --no-verbose --tries=1 --spider https://localhost/healthCheck || exit 1
+    #   test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
     #   interval: 1m30s
     #   timeout: 10s
     #   retries: 3
