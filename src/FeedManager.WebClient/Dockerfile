@@ -8,7 +8,6 @@ ENV DOTNET_JitNoMemoryBarriers=1
 ENV DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_HTTP3SUPPORT=1
 RUN apk update --no-cache
 RUN apk upgrade --no-cache
-RUN apk add --no-cache curl
 
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build

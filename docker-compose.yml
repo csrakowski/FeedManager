@@ -11,7 +11,7 @@ services:
     ports:
       - "8443:443"
     # healthcheck:
-    #   test: curl -f https://localhost/healthCheck || exit 1
+    #   test: wget --no-verbose --tries=1 --spider https://localhost/healthCheck || exit 1
     #   interval: 1m30s
     #   timeout: 10s
     #   retries: 3
@@ -28,7 +28,7 @@ services:
     ports:
       - "5443:443"
     # healthcheck:
-    #   test: curl -f https://localhost/healthCheck || exit 1
+    #   test: wget --no-verbose --tries=1 --spider https://localhost/healthCheck || exit 1
     #   interval: 1m30s
     #   timeout: 10s
     #   retries: 3
