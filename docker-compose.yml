@@ -38,6 +38,26 @@ services:
       feedmanager.silo:
         condition: service_healthy
 
+  krakend:
+    image: devopsfaith/krakend
+    volumes:
+      - lv_krakend:/etc/krakend/
+    ports:
+      - "8080:8080"
+      - "8090:8090"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider --no-check-certificate http://localhost:8080/__health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+      start_interval: 5s
+    depends_on:
+      feedmanager.silo:
+        condition: service_healthy
+
+
 volumes:
   lv_silo: {}
   lv_webclient: {}
+  lv_krakend: {}
