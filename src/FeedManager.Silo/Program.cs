@@ -27,13 +27,6 @@ namespace FeedManager.Silo
         private static IHostBuilder BuildHost(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                        .UseSerilog((context, services, configuration) =>
-                            configuration
-                                .ReadFrom.Configuration(context.Configuration)
-                                .ReadFrom.Services(services)
-                                .Enrich.FromLogContext()
-                                .WriteTo.Console()
-                        )
                         .UseOrleans((context, builder) =>
                         {
                             builder.UseLocalhostClustering()
@@ -49,6 +42,13 @@ namespace FeedManager.Silo
 
                             builder.UseDashboard();
                         })
+                        .UseSerilog((context, services, configuration) =>
+                            configuration
+                                .ReadFrom.Configuration(context.Configuration)
+                                .ReadFrom.Services(services)
+                                .Enrich.FromLogContext()
+                                .WriteTo.Console()
+                        )
                         .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
         }
     }
