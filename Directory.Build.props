@@ -4,7 +4,7 @@
         <Copyright>Christiaan Rakowski - 2017-2023</Copyright>
         <Version>1.0</Version>
         <LangVersion>latest</LangVersion>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>
     </PropertyGroup>
