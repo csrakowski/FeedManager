@@ -2,12 +2,18 @@
 // Licensed under the MIT License.
 
 using FeedManager.WebClient.Services;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 
 namespace FeedManager.WebClient;
 
 public static class Program
 {
+    public const string ServiceName = "FeedManager.WebClient";
+
     public static void Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
@@ -19,7 +25,26 @@ public static class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+
+        builder.Logging.AddOpenTelemetry(options =>
+        {
+            options
+                .SetResourceBuilder(
+                    ResourceBuilder.CreateDefault()
+                        .AddService(ServiceName))
+                .AddConsoleExporter();
+        });
+
         builder.Services.AddSerilog();
+        builder.Services.AddOpenTelemetry()
+                          .ConfigureResource(resource => resource.AddService(ServiceName))
+                          .WithTracing(tracing => tracing
+                              .AddAspNetCoreInstrumentation()
+                              //.AddHttpClientInstrumentation()
+                              .AddConsoleExporter())
+                          .WithMetrics(metrics => metrics
+                              .AddAspNetCoreInstrumentation()
+                              .AddConsoleExporter());
         builder.Services.AddRazorPages();
         builder.Services.AddHttpClient<FeedService>()
                         .ConfigureHttpClient(client => {

@@ -1,5 +1,7 @@
 using System;
 using FeedManager.Silo.StartupTasks;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
 using Orleans;
 using Orleans.Hosting;
 using Orleans.Runtime;
@@ -10,6 +12,8 @@ namespace FeedManager.Silo
 {
     public static class Program
     {
+        public const string ServiceName = "FeedManager.Silo";
+
         public static async Task<int> Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
@@ -36,6 +40,14 @@ namespace FeedManager.Silo
                             builder.ConfigureLogging(lb =>
                             {
                                 lb.AddSerilog();
+                                lb.AddOpenTelemetry(options =>
+                                {
+                                    options
+                                        .SetResourceBuilder(
+                                            ResourceBuilder.CreateDefault()
+                                                .AddService(ServiceName))
+                                        .AddConsoleExporter();
+                                });
                             });
 
                             builder.UseInMemoryReminderService();
