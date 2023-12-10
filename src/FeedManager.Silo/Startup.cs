@@ -21,10 +21,12 @@ namespace FeedManager.Silo
                           .ConfigureResource(resource => resource.AddService(Program.ServiceName))
                           .WithTracing(tracing => tracing
                               .AddAspNetCoreInstrumentation()
-                              //.AddHttpClientInstrumentation()
+                              .AddHttpClientInstrumentation()
                               .AddConsoleExporter())
                           .WithMetrics(metrics => metrics
+                              .AddRuntimeInstrumentation()
                               .AddAspNetCoreInstrumentation()
+                              .AddHttpClientInstrumentation()
                               .AddConsoleExporter());
         }
 

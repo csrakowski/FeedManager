@@ -40,10 +40,12 @@ public static class Program
                           .ConfigureResource(resource => resource.AddService(ServiceName))
                           .WithTracing(tracing => tracing
                               .AddAspNetCoreInstrumentation()
-                              //.AddHttpClientInstrumentation()
+                              .AddHttpClientInstrumentation()
                               .AddConsoleExporter())
                           .WithMetrics(metrics => metrics
+                              .AddRuntimeInstrumentation()
                               .AddAspNetCoreInstrumentation()
+                              .AddHttpClientInstrumentation()
                               .AddConsoleExporter());
         builder.Services.AddRazorPages();
         builder.Services.AddHttpClient<FeedService>()
