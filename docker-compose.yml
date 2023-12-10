@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   feedmanager.silo:
-    image: ${DOCKER_REGISTRY-}feedmanagersilo
+    image: csrakowski/feedmanagersilo
     build:
       context: .
       dockerfile: src/FeedManager.Silo/Dockerfile
@@ -19,7 +19,7 @@ services:
       start_interval: 5s
 
   feedmanager.webclient:
-    image: ${DOCKER_REGISTRY-}feedmanagerwebclient
+    image: csrakowski/feedmanagerwebclient
     build:
       context: .
       dockerfile: src/FeedManager.WebClient/Dockerfile
