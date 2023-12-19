@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedManager.WebClient", "sr
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{A84C221D-5FAE-41D7-9429-9007ADB41790}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedManager.Shared", "src\FeedManager.Shared\FeedManager.Shared.csproj", "{DD2F0AB7-F0D1-4A87-BA34-EFF94C27EA02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{A84C221D-5FAE-41D7-9429-9007ADB41790}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A84C221D-5FAE-41D7-9429-9007ADB41790}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A84C221D-5FAE-41D7-9429-9007ADB41790}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD2F0AB7-F0D1-4A87-BA34-EFF94C27EA02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD2F0AB7-F0D1-4A87-BA34-EFF94C27EA02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD2F0AB7-F0D1-4A87-BA34-EFF94C27EA02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD2F0AB7-F0D1-4A87-BA34-EFF94C27EA02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
