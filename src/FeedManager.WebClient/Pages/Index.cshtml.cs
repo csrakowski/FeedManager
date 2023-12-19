@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Threading;
 using FeedManager.Abstractions;
 using FeedManager.WebClient.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -21,8 +22,8 @@ public class IndexModel : PageModel
         FeedItems = new FeedItem[0];
     }
 
-    public async Task OnGet()
+    public async Task OnGet(CancellationToken cancellationToken)
     {
-        FeedItems = await _feedService.Get("Chris");
+        FeedItems = await _feedService.Get("Chris", cancellationToken);
     }
 }

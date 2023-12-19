@@ -17,7 +17,7 @@ public class FeedService
         _httpClient = httpClient;
     }
 
-    public async Task<FeedItem[]> Get(string username)
+    public async Task<FeedItem[]> Get(string username, CancellationToken cancellationToken)
     {
         try
         {
@@ -26,18 +26,18 @@ public class FeedService
             var request = new HttpRequestMessage(HttpMethod.Get, "feed/json");
             request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("UserId", username);
 
-            var response = await _httpClient.SendAsync(request);
+            var response = await _httpClient.SendAsync(request, cancellationToken);
 
             _logger.LogDebug("Got response with StatusCode: {StatusCode}", response.StatusCode);
 
             if (!response.IsSuccessStatusCode)
             {
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
                 _logger.LogWarning("Message: {ResultMessage}", content);
                 return Error(content);
             }
 
-            var feedItems = await response.Content.ReadFromJsonAsync<FeedItem[]>();
+            var feedItems = await response.Content.ReadFromJsonAsync<FeedItem[]>(cancellationToken);
 
             if (feedItems != null)
             {

@@ -22,7 +22,7 @@ namespace FeedManager.Silo.Controllers
 
         [HttpGet]
         [ProducesDefaultResponseType(typeof(IEnumerable<FeedItem>))]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(CancellationToken cancellationToken)
         {
             var userId = TryGetUserId();
 
@@ -39,7 +39,7 @@ namespace FeedManager.Silo.Controllers
 
         [HttpGet("rss")]
         [ProducesDefaultResponseType(typeof(SyndicationFeed))]
-        public async Task<IActionResult> GetRssFeed()
+        public async Task<IActionResult> GetRssFeed(CancellationToken cancellationToken)
         {
             var userId = TryGetUserId();
 
@@ -58,7 +58,7 @@ namespace FeedManager.Silo.Controllers
 
         [HttpGet("atom")]
         [ProducesDefaultResponseType(typeof(SyndicationFeed))]
-        public async Task<IActionResult> GetAtomFeed()
+        public async Task<IActionResult> GetAtomFeed(CancellationToken cancellationToken)
         {
             var userId = TryGetUserId();
 
@@ -77,7 +77,7 @@ namespace FeedManager.Silo.Controllers
 
         [HttpGet("html")]
         [ProducesDefaultResponseType(typeof(SyndicationFeed))]
-        public async Task<IActionResult> GetHtmlFeed()
+        public async Task<IActionResult> GetHtmlFeed(CancellationToken cancellationToken)
         {
             var userId = TryGetUserId();
 
@@ -96,7 +96,7 @@ namespace FeedManager.Silo.Controllers
 
         [HttpGet("json")]
         [ProducesResponseType(typeof(IEnumerable<FeedItem>), StatusCodes.Status200OK, "application/json")]
-        public async Task<IActionResult> GetJsonFeed()
+        public async Task<IActionResult> GetJsonFeed(CancellationToken cancellationToken)
         {
             var userId = TryGetUserId();
 
@@ -112,7 +112,7 @@ namespace FeedManager.Silo.Controllers
 
         [HttpGet("subscriptions")]
         [ProducesResponseType(typeof(IEnumerable<FeedSubscription>), StatusCodes.Status200OK, "application/json")]
-        public async Task<IActionResult> GetSubscriptions()
+        public async Task<IActionResult> GetSubscriptions(CancellationToken cancellationToken)
         {
             var userId = TryGetUserId();
 
