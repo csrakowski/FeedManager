@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FeedManager.Abstractions\FeedManager.Abstractions.csproj" />
+    <ProjectReference Include="..\FeedManager.Shared\FeedManager.Shared.csproj" />
   </ItemGroup>
 
 </Project>

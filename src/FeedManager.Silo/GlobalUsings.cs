@@ -9,3 +9,4 @@ global using Orleans.Runtime;
 global using FeedManager.Abstractions;
 global using FeedManager.Silo;
 global using FeedManager.Silo.Services;
+global using FeedManager.Shared;

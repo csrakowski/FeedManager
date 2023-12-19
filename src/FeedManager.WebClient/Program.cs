@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT License.
 
+using FeedManager.Shared;
 using FeedManager.WebClient.Services;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -36,17 +37,7 @@ public static class Program
         });
 
         builder.Services.AddSerilog();
-        builder.Services.AddOpenTelemetry()
-                          .ConfigureResource(resource => resource.AddService(ServiceName))
-                          .WithTracing(tracing => tracing
-                              .AddAspNetCoreInstrumentation()
-                              .AddHttpClientInstrumentation()
-                              .AddConsoleExporter())
-                          .WithMetrics(metrics => metrics
-                              .AddRuntimeInstrumentation()
-                              .AddAspNetCoreInstrumentation()
-                              .AddHttpClientInstrumentation()
-                              .AddConsoleExporter());
+        builder.Services.AddOpenTelemetryWithSharedConfiguration(ServiceName);
         builder.Services.AddRazorPages();
         builder.Services.AddHttpClient<FeedService>()
                         .ConfigureHttpClient(client => {
@@ -83,6 +74,8 @@ public static class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
+
+        app.UseApplicationLifetimeLinkedCancellationToken();
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();

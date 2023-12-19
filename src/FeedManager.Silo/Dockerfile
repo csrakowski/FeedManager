@@ -17,6 +17,7 @@ COPY ["Directory.Build.props", ""]
 COPY ["src/FeedManager.Silo/FeedManager.Silo.csproj", "src/FeedManager.Silo/"]
 COPY ["src/FeedManager.Abstractions/FeedManager.Abstractions.csproj", "src/FeedManager.Abstractions/"]
 COPY ["src/FeedManager.Grains/FeedManager.Grains.csproj", "src/FeedManager.Grains/"]
+COPY ["src/FeedManager.Shared/FeedManager.Shared.csproj", "src/FeedManager.Shared/"]
 RUN dotnet restore "src/FeedManager.Silo/FeedManager.Silo.csproj"
 COPY . .
 WORKDIR "/src/src/FeedManager.Silo"

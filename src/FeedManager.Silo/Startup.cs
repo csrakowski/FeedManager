@@ -1,10 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT License.
 
-using OpenTelemetry.Logs;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 using Serilog;
 
 namespace FeedManager.Silo
@@ -17,17 +13,7 @@ namespace FeedManager.Silo
             services.AddSingleton<AggregatedFeedService>();
             services.AddControllers();
             services.AddHealthChecks();
-            services.AddOpenTelemetry()
-                          .ConfigureResource(resource => resource.AddService(Program.ServiceName))
-                          .WithTracing(tracing => tracing
-                              .AddAspNetCoreInstrumentation()
-                              .AddHttpClientInstrumentation()
-                              .AddConsoleExporter())
-                          .WithMetrics(metrics => metrics
-                              .AddRuntimeInstrumentation()
-                              .AddAspNetCoreInstrumentation()
-                              .AddHttpClientInstrumentation()
-                              .AddConsoleExporter());
+            services.AddOpenTelemetryWithSharedConfiguration(Program.ServiceName);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -43,6 +29,8 @@ namespace FeedManager.Silo
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
+            app.UseApplicationLifetimeLinkedCancellationToken();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

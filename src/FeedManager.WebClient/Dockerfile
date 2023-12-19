@@ -13,6 +13,8 @@ COPY ["global.json", ""]
 COPY ["Directory.Packages.props", "."]
 COPY ["Directory.Build.props", "."]
 COPY ["src/FeedManager.WebClient/FeedManager.WebClient.csproj", "src/FeedManager.WebClient/"]
+COPY ["src/FeedManager.Abstractions/FeedManager.Abstractions.csproj", "src/FeedManager.Abstractions/"]
+COPY ["src/FeedManager.Shared/FeedManager.Shared.csproj", "src/FeedManager.Shared/"]
 RUN dotnet restore "src/FeedManager.WebClient/FeedManager.WebClient.csproj"
 COPY . .
 WORKDIR "/src/src/FeedManager.WebClient"

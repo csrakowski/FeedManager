@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FeedManager.Abstractions\FeedManager.Abstractions.csproj" />
     <ProjectReference Include="..\FeedManager.Grains\FeedManager.Grains.csproj" />
+    <ProjectReference Include="..\FeedManager.Shared\FeedManager.Shared.csproj" />
   </ItemGroup>
 
   <Target Name="ZipPublishOutput" AfterTargets="Publish">
