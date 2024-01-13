@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT License.
 
+using FeedManager.Silo.Services.HealthCheck;
 using Serilog;
 
 namespace FeedManager.Silo
@@ -12,7 +13,8 @@ namespace FeedManager.Silo
             services.AddHttpContextAccessor();
             services.AddSingleton<AggregatedFeedService>();
             services.AddControllers();
-            services.AddHealthChecks();
+            services.AddHealthChecks()
+                    .AddCheck<SiloHealthCheck>("siloHealthCheck");
             services.AddOpenTelemetryWithSharedConfiguration(Program.ServiceName);
         }
 
