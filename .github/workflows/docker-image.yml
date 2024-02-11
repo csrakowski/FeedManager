@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Build the Docker image for FeedManager.Silo
-      run: docker build . --file src/FeedManager.Silo/Dockerfile --tag feedmanagersilo:$(date +%s)
+      run: docker buildx build --platform linux/amd64,linux/arm64 --no-cache --provenance=true --sbom=true . --file src/FeedManager.Silo/Dockerfile --tag csrakowski/feedmanagersilo:$(date +%s)
     - name: Build the Docker image for FeedManager.WebClient
-      run: docker build . --file src/FeedManager.WebClient/Dockerfile --tag feedmanagerweb:$(date +%s)
+      run: docker buildx build --platform linux/amd64,linux/arm64 --no-cache --provenance=true --sbom=true . --file src/FeedManager.WebClient/Dockerfile --tag csrakowski/feedmanagerweb:$(date +%s)
