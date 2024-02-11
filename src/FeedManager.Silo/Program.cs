@@ -6,6 +6,9 @@ using Orleans;
 using Orleans.Hosting;
 using Orleans.Runtime;
 using Orleans.Runtime.Development;
+using Orleans.Persistence;
+using Orleans.Persistence.Redis;
+using StackExchange.Redis;
 using Serilog;
 
 namespace FeedManager.Silo
@@ -33,8 +36,20 @@ namespace FeedManager.Silo
             return Host.CreateDefaultBuilder(args)
                         .UseOrleans((context, builder) =>
                         {
+                            var redisEndpoint = context.Configuration["RedisGrainStorage:Endpoint"];
+
+                            Log.Logger?.Information("Using Redis GrainStorage at {redisEndpoint}.", redisEndpoint);
+
                             builder.UseLocalhostClustering()
-                                .AddMemoryGrainStorage("feedmanager")
+                                .AddRedisGrainStorage("feedmanager", o =>
+                                {
+                                    o.ConfigurationOptions = new ConfigurationOptions()
+                                    {
+                                        EndPoints = { redisEndpoint },
+                                        AbortOnConnectFail = false,
+                                        SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13
+                                    };
+                                })
                                 .AddStartupTask<TestFeedsStartupTask>();
 
                             builder.ConfigureLogging(lb =>
