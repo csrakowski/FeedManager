@@ -28,7 +28,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build the Docker image for FeedManager.Silo
-      run: docker build --no-cache . --file src/FeedManager.Silo/Dockerfile --tag ${{ env.REGISTRY }}/csrakowski/feedmanagersilo:$(date +%s)
+      run: docker build --no-cache . --file src/FeedManager.Silo/Dockerfile --tag ${{ env.REGISTRY }}/csrakowski/feedmanagersilo:$(date +%s) --tag ${{ env.REGISTRY }}/csrakowski/feedmanagersilo:latest --push
 
     - name: Build the Docker image for FeedManager.WebClient
-      run: docker build --no-cache . --file src/FeedManager.WebClient/Dockerfile --tag ${{ env.REGISTRY }}/csrakowski/feedmanagerweb:$(date +%s)
+      run: docker build --no-cache . --file src/FeedManager.WebClient/Dockerfile --tag ${{ env.REGISTRY }}/csrakowski/feedmanagerweb:$(date +%s) --tag ${{ env.REGISTRY }}/csrakowski/feedmanagerweb:latest --push
