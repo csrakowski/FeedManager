@@ -32,6 +32,10 @@ RUN dotnet publish "FeedManager.Silo.csproj" -c Release -o /app/publish /p:UseAp
 
 # Final stage: Take the original base image, copy over the published output, and get running.
 FROM base AS final
+LABEL org.opencontainers.image.source=https://github.com/csrakowski/FeedManager
+LABEL org.opencontainers.image.authors="https://github.com/csrakowski/"
+LABEL org.opencontainers.image.description="FeedManager Silo"
+LABEL org.opencontainers.image.licenses=MIT
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "FeedManager.Silo.dll"]
