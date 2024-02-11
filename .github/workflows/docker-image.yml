@@ -15,6 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image for FeedManager.Silo
-      run: docker buildx build --platform linux/amd64,linux/arm64 --no-cache . --file src/FeedManager.Silo/Dockerfile --tag csrakowski/feedmanagersilo:$(date +%s)
+      run: docker build --no-cache . --file src/FeedManager.Silo/Dockerfile --tag csrakowski/feedmanagersilo:$(date +%s)
     - name: Build the Docker image for FeedManager.WebClient
-      run: docker buildx build --platform linux/amd64,linux/arm64 --no-cache . --file src/FeedManager.WebClient/Dockerfile --tag csrakowski/feedmanagerweb:$(date +%s)
+      run: docker build --no-cache . --file src/FeedManager.WebClient/Dockerfile --tag csrakowski/feedmanagerweb:$(date +%s)
