@@ -36,13 +36,18 @@ namespace FeedManager.Silo
             return Host.CreateDefaultBuilder(args)
                         .UseOrleans((context, builder) =>
                         {
-                            var redisEndpoint = context.Configuration["RedisGrainStorage:Endpoint"];
-
-                            Log.Logger?.Information("Using Redis GrainStorage at {redisEndpoint}.", redisEndpoint);
-
                             builder.UseLocalhostClustering()
                                 .AddRedisGrainStorage("feedmanager", o =>
                                 {
+                                    var redisEndpoint = context.Configuration["REDIS_URL"];
+
+                                    if (String.IsNullOrEmpty(redisEndpoint))
+                                    {
+                                        throw new ArgumentException("No REDIS_URL configuration found.");
+                                    }
+
+                                    Log.Logger?.Information("Using Redis GrainStorage at {redisEndpoint}.", redisEndpoint);
+
                                     o.ConfigurationOptions = new ConfigurationOptions()
                                     {
                                         EndPoints = { redisEndpoint },

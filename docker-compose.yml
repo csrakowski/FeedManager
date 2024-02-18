@@ -20,6 +20,7 @@ services:
     build:
       context: .
       dockerfile: src/FeedManager.Silo/Dockerfile
+      no_cache: true
     volumes:
       - lv_silo:/var/log/
     ports:
@@ -42,6 +43,7 @@ services:
     build:
       context: .
       dockerfile: src/FeedManager.WebClient/Dockerfile
+      no_cache: true
     volumes:
       - lv_webclient:/var/log/
     ports:
