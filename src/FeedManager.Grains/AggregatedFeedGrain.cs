@@ -10,6 +10,7 @@ using System.ServiceModel.Syndication;
 using System.Xml;
 using System;
 using System.Text;
+using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -19,16 +20,19 @@ namespace FeedManager.Grains
     {
         private readonly ILogger<AggregatedFeedGrain> _logger;
         private readonly IPersistentState<AggregatedFeedGrainState> _state;
+        private readonly IPublishEndpoint _publishEndpoint;
 
         public AggregatedFeedGrain(
             ILogger<AggregatedFeedGrain> logger,
             [PersistentState(
             stateName: "AggregatedFeed",
             storageName: "feedmanager")]
-            IPersistentState<AggregatedFeedGrainState> state)
+            IPersistentState<AggregatedFeedGrainState> state,
+            IPublishEndpoint publishEndpoint)
         {
             _logger = logger;
             _state = state;
+            _publishEndpoint = publishEndpoint;
         }
 
         public override Task OnActivateAsync(CancellationToken cancellationToken)
@@ -135,6 +139,8 @@ namespace FeedManager.Grains
             var logMessage = sb.ToString();
 
             _logger?.LogDebug("{notificationMessage}", logMessage);
+
+            await _publishEndpoint.Publish(new FeedUpdatedMessage { FeedId = IdentityString, NotificationMessage = logMessage });
         }
 
         public Task<IEnumerable<FeedItem>> GetAggregatedFeedAsync()

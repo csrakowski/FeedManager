@@ -1,5 +1,6 @@
 using System;
 using FeedManager.Silo.StartupTasks;
+using MassTransit;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using Orleans;
@@ -81,6 +82,13 @@ namespace FeedManager.Silo
                                 .Enrich.FromLogContext()
                                 .WriteTo.Console()
                         )
+                        .UseMassTransit((ctx, config) =>
+                        {
+                            config.UsingRabbitMq((context, cfg) =>
+                            {
+                                cfg.ConfigureEndpoints(context);
+                            });
+                        })
                         .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
         }
     }

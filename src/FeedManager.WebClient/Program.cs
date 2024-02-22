@@ -3,6 +3,7 @@
 
 using FeedManager.Shared;
 using FeedManager.WebClient.Services;
+using MassTransit;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -56,6 +57,15 @@ public static class Program
                             }
                         });
         builder.Services.AddHealthChecks();
+        builder.Services.AddMassTransit(x =>
+        {
+            x.AddConsumers(typeof(Program).Assembly);
+
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.ConfigureEndpoints(context);
+            });
+        });
 
         builder.Host.UseSerilog((context, services, configuration) => configuration
                     .ReadFrom.Configuration(context.Configuration)

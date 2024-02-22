@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <PackageReference Include="CSRakowski.ParallelAsync" />
+    <PackageReference Include="MassTransit.Abstractions" />
     <PackageReference Include="Microsoft.Orleans.Runtime" />
     <PackageReference Include="Microsoft.Orleans.Sdk" />
   </ItemGroup>
