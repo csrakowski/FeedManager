@@ -1,7 +1,7 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 # Base stage: Pull in a base image and do some basic setup (VS Debugging uses this base image as well)
-FROM csrakowski/aspnet:8-alpine3.19 AS base
+FROM csrakowski/aspnet:8-alpine AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
