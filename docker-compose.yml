@@ -19,6 +19,9 @@ services:
     image: rabbitmq
     ports:
       - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASSWORD: rabbit
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q status"]
       interval: 10s  # Check every 10 seconds
@@ -36,6 +39,10 @@ services:
       - "8443:443"
     environment:
       REDIS_URL: "redis:6379"
+      RABBITMQ_URL: "rabbitmq://rabbitmq:5672"
+      RABBITMQ_VIRTUALHOST: "/"
+      RABBITMQ_USER: rabbit
+      RABBITMQ_PASSWORD: rabbit
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
       interval: 30s
@@ -59,6 +66,11 @@ services:
       - lv_webclient:/var/log/
     ports:
       - "5443:443"
+    environment:
+      RABBITMQ_URL: "rabbitmq://rabbitmq:5672"
+      RABBITMQ_VIRTUALHOST: "/"
+      RABBITMQ_USER: rabbit
+      RABBITMQ_PASSWORD: rabbit
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
       interval: 30s

@@ -4,6 +4,7 @@
 using FeedManager.Shared;
 using FeedManager.WebClient.Services;
 using MassTransit;
+using Microsoft.Extensions.Configuration;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -59,10 +60,21 @@ public static class Program
         builder.Services.AddHealthChecks();
         builder.Services.AddMassTransit(x =>
         {
+            x.SetKebabCaseEndpointNameFormatter();
+
             x.AddConsumers(typeof(Program).Assembly);
 
             x.UsingRabbitMq((context, cfg) =>
             {
+                cfg.Host(
+                    host: builder.Configuration.GetValue<string>("RABBITMQ_URL"),
+                    virtualHost: builder.Configuration.GetValue<string>("RABBITMQ_VIRTUALHOST"),
+                    configure: c =>
+                    {
+                        c.Username(builder.Configuration.GetValue<string>("RABBITMQ_USER"));
+                        c.Password(builder.Configuration.GetValue<string>("RABBITMQ_PASSWORD"));
+                    });
+
                 cfg.ConfigureEndpoints(context);
             });
         });

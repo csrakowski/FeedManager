@@ -86,6 +86,16 @@ namespace FeedManager.Silo
                         {
                             config.UsingRabbitMq((context, cfg) =>
                             {
+                                cfg.Host(
+                                    host: ctx.Configuration.GetValue<string>("RABBITMQ_URL"),
+                                    virtualHost: ctx.Configuration.GetValue<string>("RABBITMQ_VIRTUALHOST"),
+                                    configure: c =>
+                                    {
+                                        c.Username(ctx.Configuration.GetValue<string>("RABBITMQ_USER"));
+                                        c.Password(ctx.Configuration.GetValue<string>("RABBITMQ_PASSWORD"));
+                                    });
+
+
                                 cfg.ConfigureEndpoints(context);
                             });
                         })
