@@ -16,9 +16,14 @@ services:
       retries: 3     # Retry 3 times before considering unhealthy
 
   rabbitmq:
-    image: rabbitmq
+    image: rabbitmq:3-management
+    volumes:
+      - lv_rabbitmq_etc:/etc/rabbitmq
+      - lv_rabbitmq_var:/var/lib/rabbitmq
     ports:
       - "5672:5672"
+      - "15692:15692"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: rabbit
       RABBITMQ_DEFAULT_PASSWORD: rabbit
@@ -39,7 +44,7 @@ services:
       - "8443:443"
     environment:
       REDIS_URL: "redis:6379"
-      RABBITMQ_URL: "rabbitmq://rabbitmq:5672"
+      RABBITMQ_URL: "rabbitmq"
       RABBITMQ_VIRTUALHOST: "/"
       RABBITMQ_USER: rabbit
       RABBITMQ_PASSWORD: rabbit
@@ -55,7 +60,7 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-
+  
   feedmanager.webclient:
     image: csrakowski/feedmanagerwebclient
     build:
@@ -67,7 +72,7 @@ services:
     ports:
       - "5443:443"
     environment:
-      RABBITMQ_URL: "rabbitmq://rabbitmq:5672"
+      RABBITMQ_URL: "rabbitmq"
       RABBITMQ_VIRTUALHOST: "/"
       RABBITMQ_USER: rabbit
       RABBITMQ_PASSWORD: rabbit
@@ -103,6 +108,8 @@ services:
 
 volumes:
   lv_redis: {}
+  lv_rabbitmq_etc: {}
+  lv_rabbitmq_var: {}
   lv_silo: {}
   lv_webclient: {}
   lv_krakend: {}
