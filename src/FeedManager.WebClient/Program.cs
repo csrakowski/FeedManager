@@ -39,6 +39,7 @@ public static class Program
         });
 
         builder.Services.AddSerilog();
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddOpenTelemetryWithSharedConfiguration(ServiceName);
         builder.Services.AddRazorPages();
         builder.Services.AddHttpClient<FeedService>()

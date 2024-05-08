@@ -3,22 +3,22 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Azure.Identity" Version="1.10.4" />
+    <PackageVersion Include="Azure.Identity" Version="1.11.3" />
     <PackageVersion Include="CSRakowski.ParallelAsync" Version="1.7.2" />
-    <PackageVersion Include="MassTransit.Abstractions" Version="8.2.0" />
-    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.2.0" />
-    <PackageVersion Include="Microsoft.Orleans.Persistence.AdoNet" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Orleans.Persistence.Memory" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Orleans.Persistence.Redis" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Orleans.Runtime" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Orleans.Sdk" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Orleans.Server" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.7.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.7.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.7.1" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.7.1" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.7.0" />
+    <PackageVersion Include="MassTransit.Abstractions" Version="8.2.2" />
+    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.2.2" />
+    <PackageVersion Include="Microsoft.Orleans.Persistence.AdoNet" Version="8.1.0" />
+    <PackageVersion Include="Microsoft.Orleans.Persistence.Memory" Version="8.1.0" />
+    <PackageVersion Include="Microsoft.Orleans.Persistence.Redis" Version="8.1.0" />
+    <PackageVersion Include="Microsoft.Orleans.Runtime" Version="8.1.0" />
+    <PackageVersion Include="Microsoft.Orleans.Sdk" Version="8.1.0" />
+    <PackageVersion Include="Microsoft.Orleans.Server" Version="8.1.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.8.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.8.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.8.0" />
     <PackageVersion Include="OrleansDashboard" Version="8.0.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="8.0.1" />
     <PackageVersion Include="System.ServiceModel.Syndication" Version="8.0.0" />
