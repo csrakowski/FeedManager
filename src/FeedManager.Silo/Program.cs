@@ -88,6 +88,7 @@ namespace FeedManager.Silo
                             {
                                 cfg.Host(
                                     host: ctx.Configuration.GetValue<string>("RABBITMQ_URL"),
+                                    port: ctx.Configuration.GetValue<ushort>("RABBITMQ_PORT"),
                                     virtualHost: ctx.Configuration.GetValue<string>("RABBITMQ_VIRTUALHOST"),
                                     configure: c =>
                                     {

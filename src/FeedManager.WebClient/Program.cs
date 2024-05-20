@@ -69,6 +69,7 @@ public static class Program
             {
                 cfg.Host(
                     host: builder.Configuration.GetValue<string>("RABBITMQ_URL"),
+                    port: builder.Configuration.GetValue<ushort>("RABBITMQ_PORT"),
                     virtualHost: builder.Configuration.GetValue<string>("RABBITMQ_VIRTUALHOST"),
                     configure: c =>
                     {

@@ -25,8 +25,8 @@ services:
       - "15692:15692"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: rabbit
-      RABBITMQ_DEFAULT_PASSWORD: rabbit
+      RABBITMQ_DEFAULT_USER: "rabbit"
+      RABBITMQ_DEFAULT_PASS: "rabbit"
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q status"]
       interval: 10s  # Check every 10 seconds
@@ -45,9 +45,10 @@ services:
     environment:
       REDIS_URL: "redis:6379"
       RABBITMQ_URL: "rabbitmq"
+      RABBITMQ_PORT: 5672
       RABBITMQ_VIRTUALHOST: "/"
-      RABBITMQ_USER: rabbit
-      RABBITMQ_PASSWORD: rabbit
+      RABBITMQ_USER: "rabbit"
+      RABBITMQ_PASSWORD: "rabbit"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
       interval: 30s
@@ -72,10 +73,12 @@ services:
     ports:
       - "5443:443"
     environment:
+      REDIS_URL: "redis:6379"
       RABBITMQ_URL: "rabbitmq"
+      RABBITMQ_PORT: 5672
       RABBITMQ_VIRTUALHOST: "/"
-      RABBITMQ_USER: rabbit
-      RABBITMQ_PASSWORD: rabbit
+      RABBITMQ_USER: "rabbit"
+      RABBITMQ_PASSWORD: "rabbit"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
       interval: 30s
