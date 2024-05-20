@@ -6,7 +6,7 @@ services:
     volumes:
       - lv_redis:/data/
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:6379"
       - "8001:8001"
     environment:
       REDIS_ARGS: "--appendonly yes --save 60 1"
@@ -21,12 +21,12 @@ services:
       - lv_rabbitmq_etc:/etc/rabbitmq
       - lv_rabbitmq_var:/var/lib/rabbitmq
     ports:
-      - "5672:5672"
+      - "${RABBITMQ_PORT}:5672"
       - "15692:15692"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: "rabbit"
-      RABBITMQ_DEFAULT_PASS: "rabbit"
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD}"
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q status"]
       interval: 10s  # Check every 10 seconds
@@ -43,12 +43,12 @@ services:
     ports:
       - "8443:443"
     environment:
-      REDIS_URL: "redis:6379"
+      REDIS_URL: "redis:${REDIS_PORT}"
       RABBITMQ_URL: "rabbitmq"
-      RABBITMQ_PORT: 5672
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
       RABBITMQ_VIRTUALHOST: "/"
-      RABBITMQ_USER: "rabbit"
-      RABBITMQ_PASSWORD: "rabbit"
+      RABBITMQ_USER: "${RABBITMQ_USER}"
+      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
       interval: 30s
@@ -73,12 +73,12 @@ services:
     ports:
       - "5443:443"
     environment:
-      REDIS_URL: "redis:6379"
+      REDIS_URL: "redis:${REDIS_PORT}"
       RABBITMQ_URL: "rabbitmq"
-      RABBITMQ_PORT: 5672
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
       RABBITMQ_VIRTUALHOST: "/"
-      RABBITMQ_USER: "rabbit"
-      RABBITMQ_PASSWORD: "rabbit"
+      RABBITMQ_USER: "${RABBITMQ_USER}"
+      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
       interval: 30s
