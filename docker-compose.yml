@@ -32,6 +32,15 @@ services:
       interval: 10s  # Check every 10 seconds
       retries: 3     # Retry 3 times before considering unhealthy
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    volumes:
+      - lv_jaeger_etc:/etc/jaeger
+    ports:
+      - "4317:4317"
+      - "16686:16686"
+
+
   feedmanager.silo:
     image: csrakowski/feedmanagersilo
     build:
@@ -49,6 +58,7 @@ services:
       RABBITMQ_VIRTUALHOST: "/"
       RABBITMQ_USER: "${RABBITMQ_USER}"
       RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger:4317"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
       interval: 30s
@@ -61,7 +71,9 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-  
+      jaeger:
+        condition: service_started
+
   feedmanager.webclient:
     image: csrakowski/feedmanagerwebclient
     build:
@@ -79,6 +91,7 @@ services:
       RABBITMQ_VIRTUALHOST: "/"
       RABBITMQ_USER: "${RABBITMQ_USER}"
       RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger:4317"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
       interval: 30s
@@ -89,6 +102,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      jaeger:
+        condition: service_started
 
   krakend:
     image: devopsfaith/krakend
@@ -116,3 +131,4 @@ volumes:
   lv_silo: {}
   lv_webclient: {}
   lv_krakend: {}
+  lv_jaeger_etc: {}

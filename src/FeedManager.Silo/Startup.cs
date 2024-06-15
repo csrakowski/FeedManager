@@ -15,7 +15,12 @@ namespace FeedManager.Silo
             services.AddControllers();
             services.AddHealthChecks()
                     .AddCheck<SiloHealthCheck>("siloHealthCheck");
-            services.AddOpenTelemetryWithSharedConfiguration(Program.ServiceName);
+
+            using (var serviceProvider = services.BuildServiceProvider())
+            {
+                var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+                services.AddOpenTelemetryWithSharedConfiguration(Program.ServiceName, configuration);
+            }
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

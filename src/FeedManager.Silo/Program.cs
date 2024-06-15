@@ -61,14 +61,7 @@ namespace FeedManager.Silo
                             builder.ConfigureLogging(lb =>
                             {
                                 lb.AddSerilog();
-                                lb.AddOpenTelemetry(options =>
-                                {
-                                    options
-                                        .SetResourceBuilder(
-                                            ResourceBuilder.CreateDefault()
-                                                .AddService(ServiceName))
-                                        .AddConsoleExporter();
-                                });
+                                lb.AddOpenTelemetryWithSharedConfiguration(ServiceName, context.Configuration);
                             });
 
                             builder.UseInMemoryReminderService();

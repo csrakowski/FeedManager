@@ -29,18 +29,11 @@ public static class Program
 
         // Add services to the container.
 
-        builder.Logging.AddOpenTelemetry(options =>
-        {
-            options
-                .SetResourceBuilder(
-                    ResourceBuilder.CreateDefault()
-                        .AddService(ServiceName))
-                .AddConsoleExporter();
-        });
+        builder.Logging.AddOpenTelemetryWithSharedConfiguration(ServiceName, builder.Configuration);
 
         builder.Services.AddSerilog();
         builder.Services.AddHttpContextAccessor();
-        builder.Services.AddOpenTelemetryWithSharedConfiguration(ServiceName);
+        builder.Services.AddOpenTelemetryWithSharedConfiguration(ServiceName, builder.Configuration);
         builder.Services.AddRazorPages();
         builder.Services.AddHttpClient<FeedService>()
                         .ConfigureHttpClient(client => {
