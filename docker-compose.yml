@@ -1,8 +1,72 @@
 version: '3.4'
 
 services:
+  feedmanager.silo:
+    image: csrakowski/feedmanagersilo
+    build:
+      context: .
+      dockerfile: src/FeedManager.Silo/Dockerfile
+      no_cache: true
+    volumes:
+      - lv_silo:/var/log/
+    ports:
+      - "8443:443"
+    environment:
+      REDIS_URL: "redis:${REDIS_PORT}"
+      RABBITMQ_URL: "rabbitmq"
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_VIRTUALHOST: "/"
+      RABBITMQ_USER: "${RABBITMQ_USER}"
+      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel_collector:4317"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+      start_interval: 5s
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      otel_collector:
+        condition: service_started
+
+  feedmanager.webclient:
+    image: csrakowski/feedmanagerwebclient
+    build:
+      context: .
+      dockerfile: src/FeedManager.WebClient/Dockerfile
+      no_cache: true
+    volumes:
+      - lv_webclient:/var/log/
+    ports:
+      - "5443:443"
+    environment:
+      REDIS_URL: "redis:${REDIS_PORT}"
+      RABBITMQ_URL: "rabbitmq"
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_VIRTUALHOST: "/"
+      RABBITMQ_USER: "${RABBITMQ_USER}"
+      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel_collector:4317"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+      start_interval: 5s
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      otel_collector:
+        condition: service_started
+
   redis:
-    image: redis/redis-stack
+    image: redis/redis-stack:latest
     volumes:
       - lv_redis:/data/
     ports:
@@ -31,80 +95,7 @@ services:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q status"]
       interval: 10s  # Check every 10 seconds
       retries: 3     # Retry 3 times before considering unhealthy
-
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    volumes:
-      - lv_jaeger_etc:/etc/jaeger
-    ports:
-      - "4317:4317"
-      - "16686:16686"
-
-
-  feedmanager.silo:
-    image: csrakowski/feedmanagersilo
-    build:
-      context: .
-      dockerfile: src/FeedManager.Silo/Dockerfile
-      no_cache: true
-    volumes:
-      - lv_silo:/var/log/
-    ports:
-      - "8443:443"
-    environment:
-      REDIS_URL: "redis:${REDIS_PORT}"
-      RABBITMQ_URL: "rabbitmq"
-      RABBITMQ_PORT: ${RABBITMQ_PORT}
-      RABBITMQ_VIRTUALHOST: "/"
-      RABBITMQ_USER: "${RABBITMQ_USER}"
-      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger:4317"
-    healthcheck:
-      test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-      start_interval: 5s
-    depends_on:
-      redis:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-      jaeger:
-        condition: service_started
-
-  feedmanager.webclient:
-    image: csrakowski/feedmanagerwebclient
-    build:
-      context: .
-      dockerfile: src/FeedManager.WebClient/Dockerfile
-      no_cache: true
-    volumes:
-      - lv_webclient:/var/log/
-    ports:
-      - "5443:443"
-    environment:
-      REDIS_URL: "redis:${REDIS_PORT}"
-      RABBITMQ_URL: "rabbitmq"
-      RABBITMQ_PORT: ${RABBITMQ_PORT}
-      RABBITMQ_VIRTUALHOST: "/"
-      RABBITMQ_USER: "${RABBITMQ_USER}"
-      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger:4317"
-    healthcheck:
-      test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 15s
-      start_interval: 5s
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      jaeger:
-        condition: service_started
-
+      
   krakend:
     image: devopsfaith/krakend
     volumes:
@@ -122,6 +113,52 @@ services:
     depends_on:
       feedmanager.silo:
         condition: service_healthy
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    volumes:
+      - lv_jaeger_etc:/etc/jaeger
+    ports:
+      - "4317:4317"
+      - "16686:16686"
+    environment:
+      - METRICS_STORAGE_TYPE=prometheus
+      - PROMETHEUS_SERVER_URL=http://prometheus:9090
+      - PROMETHEUS_QUERY_SUPPORT_SPANMETRICS_CONNECTOR=true
+      - PROMETHEUS_QUERY_NAMESPACE=
+      - PROMETHEUS_QUERY_DURATION_UNIT=
+      - PROMETHEUS_QUERY_NORMALIZE_CALLS=true
+      - PROMETHEUS_QUERY_NORMALIZE_DURATION=true
+
+  otel_collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    #0.89.0
+    volumes:
+      - ./configs/otel-collector-config-connector.yml:/etc/otelcol/otel-collector-config.yml
+    command: --config /etc/otelcol/otel-collector-config.yml
+    depends_on:
+      jaeger:
+        condition: service_started
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - "./configs/prometheus.yml:/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./configs/grafana.ini:/etc/grafana/grafana.ini
+      - ./configs/grafana_datasource.yml:/etc/grafana/provisioning/datasources/datasource.yaml
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - 3000:3000
+
 
 
 volumes:
