@@ -20,9 +20,8 @@ public static class OpenTelemetryConfigurationHelper
     {
         return loggingBuilder.AddOpenTelemetry(options =>
         {
-            options.SetResourceBuilder(
-                        ResourceBuilder.CreateDefault()
-                            .AddService(serviceName))
+            var resourceBuilder = ResourceBuilder.CreateDefault().AddService(serviceName);
+            options.SetResourceBuilder(resourceBuilder)
                     //.AddConsoleExporter()
                     .AddOtlpExporter(conf => {
                         ConfigureOtlpExporter(conf, configuration);
@@ -33,22 +32,24 @@ public static class OpenTelemetryConfigurationHelper
     public static IOpenTelemetryBuilder AddOpenTelemetryWithSharedConfiguration(this IServiceCollection services, string serviceName, IConfiguration configuration)
     {
         return services.AddOpenTelemetry()
-                          .ConfigureResource(resource => resource.AddService(serviceName))
-                          .WithTracing(tracing => tracing
-                                .AddAspNetCoreInstrumentation()
-                                .AddHttpClientInstrumentation()
-                                //.AddConsoleExporter()
-                                .AddOtlpExporter(conf => {
-                                    ConfigureOtlpExporter(conf, configuration);
-                                }))
-                          .WithMetrics(metrics => metrics
-                                .AddRuntimeInstrumentation()
-                                .AddAspNetCoreInstrumentation()
-                                .AddHttpClientInstrumentation()
-                                //.AddConsoleExporter()
-                                .AddOtlpExporter(conf => {
-                                    ConfigureOtlpExporter(conf, configuration);
-                                }));
+                        .ConfigureResource(resource => resource.AddService(serviceName))
+                        .WithTracing(tracing => tracing
+                            .AddAspNetCoreInstrumentation()
+                            .AddHttpClientInstrumentation()
+                            //.AddConsoleExporter()
+                            .AddOtlpExporter(conf => {
+                                ConfigureOtlpExporter(conf, configuration);
+                            })
+                        )
+                        .WithMetrics(metrics => metrics
+                            .AddRuntimeInstrumentation()
+                            .AddAspNetCoreInstrumentation()
+                            .AddHttpClientInstrumentation()
+                            //.AddConsoleExporter()
+                            .AddOtlpExporter(conf => {
+                                ConfigureOtlpExporter(conf, configuration);
+                            })
+                        );
     }
 
     private static void ConfigureOtlpExporter(OtlpExporterOptions otlpExporterOptions, IConfiguration configuration)
@@ -57,12 +58,10 @@ public static class OpenTelemetryConfigurationHelper
         {
             var otlpEndpoint = configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
 
-            if (String.IsNullOrEmpty(otlpEndpoint))
+            if (!String.IsNullOrEmpty(otlpEndpoint))
             {
-                throw new ArgumentException("No OTEL_EXPORTER_OTLP_ENDPOINT configuration found.");
+                otlpExporterOptions.Endpoint = new Uri(otlpEndpoint);
             }
-
-            otlpExporterOptions.Endpoint = new Uri(otlpEndpoint);
         }
     }
 }
