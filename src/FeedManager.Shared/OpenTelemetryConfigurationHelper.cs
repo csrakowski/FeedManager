@@ -29,18 +29,26 @@ public static class OpenTelemetryConfigurationHelper
         });
     }
 
-    public static IOpenTelemetryBuilder AddOpenTelemetryWithSharedConfiguration(this IServiceCollection services, string serviceName, IConfiguration configuration)
+    public static IOpenTelemetryBuilder AddOpenTelemetryWithSharedConfiguration(this IServiceCollection services, string serviceName, IConfiguration configuration, params string[] additionalTracingSources)
     {
         return services.AddOpenTelemetry()
                         .ConfigureResource(resource => resource.AddService(serviceName))
-                        .WithTracing(tracing => tracing
-                            .AddAspNetCoreInstrumentation()
-                            .AddHttpClientInstrumentation()
-                            //.AddConsoleExporter()
-                            .AddOtlpExporter(conf => {
-                                ConfigureOtlpExporter(conf, configuration);
-                            })
-                        )
+                        .WithTracing(tracing =>
+                        {
+                            tracing
+                                .AddAspNetCoreInstrumentation()
+                                .AddHttpClientInstrumentation();
+
+                                if (additionalTracingSources?.Any() == true)
+                                {
+                                    tracing.AddSource(additionalTracingSources);
+                                }
+
+                                tracing.AddOtlpExporter(conf =>
+                                {
+                                    ConfigureOtlpExporter(conf, configuration);
+                                });
+                        })
                         .WithMetrics(metrics => metrics
                             .AddRuntimeInstrumentation()
                             .AddAspNetCoreInstrumentation()

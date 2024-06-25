@@ -20,7 +20,7 @@ namespace FeedManager.Silo
             using (var serviceProvider = services.BuildServiceProvider())
             {
                 var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-                services.AddOpenTelemetryWithSharedConfiguration(Program.ServiceName, configuration);
+                services.AddOpenTelemetryWithSharedConfiguration(Program.ServiceName, configuration, MassTransit.Logging.DiagnosticHeaders.DefaultListenerName);
             }
 
             services.AddSingleton<FeedCounter>();
