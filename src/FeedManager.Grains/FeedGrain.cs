@@ -12,6 +12,7 @@ using System;
 using System.Reflection.Metadata;
 using Microsoft.Extensions.Logging;
 using CSRakowski.Parallel;
+using FeedManager.Grains.Metrics;
 
 namespace FeedManager.Grains
 {
@@ -19,6 +20,7 @@ namespace FeedManager.Grains
     {
         private readonly ILogger<FeedGrain> _logger;
         private readonly IPersistentState<FeedGrainState> _state;
+        private readonly FeedCounter _feedCounter;
 
         private IDisposable? _timerHandle;
 
@@ -27,10 +29,12 @@ namespace FeedManager.Grains
             [PersistentState(
             stateName: "Feed",
             storageName: "feedmanager")]
-            IPersistentState<FeedGrainState> state)
+            IPersistentState<FeedGrainState> state,
+            FeedCounter feedCounter)
         {
             _logger = logger;
             _state = state;
+            _feedCounter = feedCounter;
         }
 
         public override Task OnActivateAsync(CancellationToken cancellationToken)
@@ -52,7 +56,9 @@ namespace FeedManager.Grains
 
         public async Task<bool> SubscribeToUpdatesAsync(string aggregatedFeedId)
         {
-            _logger?.LogDebug("{method}: {aggregatedFeedId}", nameof(SubscribeToUpdatesAsync), aggregatedFeedId);
+            var feedUrl = this.GetPrimaryKeyString();
+
+            _logger?.LogDebug("{method}: {aggregatedFeedId}, {feedUrl}", nameof(SubscribeToUpdatesAsync), aggregatedFeedId, feedUrl);
 
             var newlyAdded = _state.State.Subscribers.Add(aggregatedFeedId);
 
@@ -60,20 +66,32 @@ namespace FeedManager.Grains
 
             await SendExistingItemsAsync(aggregatedFeedId);
 
-            _logger?.LogDebug("{method}: {aggregatedFeedId}. Result: {newlyAdded}", nameof(SubscribeToUpdatesAsync), aggregatedFeedId, newlyAdded);
+            _logger?.LogDebug("{method}: {aggregatedFeedId}, {feedUrl}. Result: {newlyAdded}", nameof(SubscribeToUpdatesAsync), aggregatedFeedId, feedUrl, newlyAdded);
+
+            if (newlyAdded)
+            {
+                _feedCounter.CountNewSubscriber(feedUrl, aggregatedFeedId);
+            }
 
             return newlyAdded;
         }
 
         public async Task<bool> UnsubscribeFromUpdatesAsync(string aggregatedFeedId)
         {
-            _logger?.LogDebug("{method}: {aggregatedFeedId}", nameof(UnsubscribeFromUpdatesAsync), aggregatedFeedId);
+            var feedUrl = this.GetPrimaryKeyString();
+
+            _logger?.LogDebug("{method}: {aggregatedFeedId}, {feedUrl}", nameof(UnsubscribeFromUpdatesAsync), aggregatedFeedId, feedUrl);
 
             var wasRemoved = _state.State.Subscribers.Remove(aggregatedFeedId);
 
             await _state.WriteStateAsync();
 
-            _logger?.LogDebug("{method}: {aggregatedFeedId}. Result: {wasRemoved}", nameof(SubscribeToUpdatesAsync), aggregatedFeedId, wasRemoved);
+            _logger?.LogDebug("{method}: {aggregatedFeedId}, {feedUrl}. Result: {wasRemoved}", nameof(SubscribeToUpdatesAsync), aggregatedFeedId, feedUrl, wasRemoved);
+
+            if (wasRemoved)
+            {
+                _feedCounter.CountRemoveSubscriber(feedUrl, aggregatedFeedId);
+            }
 
             return wasRemoved;
         }
@@ -90,6 +108,8 @@ namespace FeedManager.Grains
             var feedUrl = this.GetPrimaryKeyString();
 
             _logger?.LogDebug("{method}: {feedUrl}", nameof(PollFeedAsync), feedUrl);
+
+            _feedCounter.CountFeedRefresh(feedUrl);
 
             var newFeedItems = new List<FeedItem>();
 
@@ -123,11 +143,15 @@ namespace FeedManager.Grains
 
         private Task SendUpdateAsync(IEnumerable<FeedItem> feedItems)
         {
+            var feedUrl = this.GetPrimaryKeyString();
+
             return ParallelAsync.ForEachAsync(_state.State.Subscribers, async subscriberId => {
-                _logger?.LogDebug("{method}: {subscriberId}", nameof(SendUpdateAsync), subscriberId);
+                _logger?.LogDebug("{method}: {subscriberId}, {feedUrl}", nameof(SendUpdateAsync), subscriberId, feedUrl);
 
                 var subscriber = GrainFactory.GetGrain<IAggregatedFeedGrain>(subscriberId);
                 await subscriber.AddNewFeedItemsAsync(feedItems);
+
+                _feedCounter.CountSubscriberNotify(feedUrl, subscriberId);
             }, allowOutOfOrderProcessing: true);
         }
 

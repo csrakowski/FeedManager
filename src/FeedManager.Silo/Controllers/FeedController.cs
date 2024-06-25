@@ -126,6 +126,24 @@ namespace FeedManager.Silo.Controllers
             return new JsonResult(subscriptions);
         }
 
+        [HttpGet("refreshfeed")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        public async Task<IActionResult> RefreshFeed(CancellationToken cancellationToken)
+        {
+            var userId = TryGetUserId();
+
+            if (String.IsNullOrEmpty(userId))
+            {
+                userId = "Chris";
+                //return Unauthorized();
+            }
+
+            await _aggregatedFeedService.RefreshAggregatedFeedAsync(userId);
+
+            return Accepted();
+        }
+
+
         private string? TryGetUserId()
         {
             var claimId = User?.FindFirstValue(ClaimTypes.NameIdentifier);

@@ -13,6 +13,8 @@ using System.Text;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using FeedManager.Grains.Metrics;
+using CSRakowski.Parallel;
 
 namespace FeedManager.Grains
 {
@@ -21,6 +23,7 @@ namespace FeedManager.Grains
         private readonly ILogger<AggregatedFeedGrain> _logger;
         private readonly IPersistentState<AggregatedFeedGrainState> _state;
         private readonly IPublishEndpoint _publishEndpoint;
+        private readonly FeedCounter _feedCounter;
 
         public AggregatedFeedGrain(
             ILogger<AggregatedFeedGrain> logger,
@@ -28,11 +31,13 @@ namespace FeedManager.Grains
             stateName: "AggregatedFeed",
             storageName: "feedmanager")]
             IPersistentState<AggregatedFeedGrainState> state,
-            IPublishEndpoint publishEndpoint)
+            IPublishEndpoint publishEndpoint,
+            FeedCounter feedCounter)
         {
             _logger = logger;
             _state = state;
             _publishEndpoint = publishEndpoint;
+            _feedCounter = feedCounter;
         }
 
         public override Task OnActivateAsync(CancellationToken cancellationToken)
@@ -116,7 +121,7 @@ namespace FeedManager.Grains
 
             _state.State.FeedItems = _state.State.FeedItems
                                         .Where(fi => DateTimeOffset.UtcNow.Subtract(fi.PublishDate).TotalDays < _state.State.PruneAfterDays)
-                                        .OrderBy(fi => fi.PublishDate)
+                                        .OrderBy(fi => fi.PublishDate.UtcDateTime)
                                         .ToList();
 
             await _state.WriteStateAsync();
@@ -145,20 +150,45 @@ namespace FeedManager.Grains
 
         public Task<IEnumerable<FeedItem>> GetAggregatedFeedAsync()
         {
-            _logger?.LogDebug("{method}", nameof(GetAggregatedFeedAsync));
+            var myKey = this.GetPrimaryKeyString();
+
+            _logger?.LogDebug("{method} {aggregatedFeed}", nameof(GetAggregatedFeedAsync), myKey);
 
             var feedItems = _state.State.FeedItems;
+
+            _feedCounter.CountAggregatedFeedListing(myKey);
 
             return Task.FromResult(feedItems as IEnumerable<FeedItem>);
         }
 
         public Task<IEnumerable<FeedSubscription>> GetSubscriptions()
         {
-            _logger?.LogDebug("{method}", nameof(GetSubscriptions));
+            var myKey = this.GetPrimaryKeyString();
+
+            _logger?.LogDebug("{method} {aggregatedFeed}", nameof(GetSubscriptions), myKey);
 
             var subscriptions = _state.State.SubscribedFeeds;
 
+            _feedCounter.CountAggregatedFeedSubscriberListing(myKey);
+
             return Task.FromResult(subscriptions as IEnumerable<FeedSubscription>);
+        }
+
+        public Task RefreshAggregatedFeedAsync()
+        {
+            var myKey = this.GetPrimaryKeyString();
+
+            _logger?.LogDebug("{method} {aggregatedFeed}", nameof(RefreshAggregatedFeedAsync), myKey);
+
+            var feeds = _state.State.SubscribedFeeds.Select(feed => feed.Url).Distinct().ToList();
+
+            return ParallelAsync.ForEachAsync(feeds, async feedSubscription => {
+                _logger?.LogDebug("{method}: {aggregatedFeed}, {feedUrl}", nameof(RefreshAggregatedFeedAsync), myKey, feedSubscription);
+
+                var feed = GrainFactory.GetGrain<IFeedGrain>(feedSubscription);
+                await feed.TriggerFeedRefresh();
+
+            }, allowOutOfOrderProcessing: true);
         }
     }
 }

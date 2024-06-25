@@ -26,4 +26,17 @@ public class IndexModel : PageModel
     {
         FeedItems = await _feedService.Get("Chris", cancellationToken);
     }
+
+    public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
+    {
+        var result = await _feedService.RefreshFeeds("Chris", cancellationToken);
+        if (result.error)
+        {
+            return BadRequest(result.message);
+        }
+        else
+        {
+            return StatusCode(StatusCodes.Status202Accepted);
+        }
+    }
 }

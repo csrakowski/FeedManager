@@ -14,6 +14,9 @@
         <h2 class="text-center">
             Page generated at: @DateTimeOffset.UtcNow.ToString("yyyy-MM-dd HH:mm") UTC
         </h2>
+        <button type="button" class="btn btn-default float-end" aria-label="Refresh" onclick="onClick_RefreshFeeds">
+            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+        </button>
     </header>
     
     <p>Got @Model.FeedItems.Length Messages</p>
@@ -32,7 +35,7 @@
                         </div>
                     </div>
                     <footer class="card-footer text-muted text-right">
-                        <small>Published: @feedItem.PublishDate</small>
+                        <small>Published: @feedItem.PublishDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm") (@feedItem.PublishDate)</small>
                     </footer>
                 </article>
             </div>
@@ -40,3 +43,17 @@
     }
 
 </div>
+
+@section Scripts {
+
+    <script>
+        function onClick_RefreshFeeds(e) {
+            e.preventDefault();
+
+            $.post("/")
+                .done(() => {
+                    window.location.reload();
+                });
+        }
+    </script>
+}
