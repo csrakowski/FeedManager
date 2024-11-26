@@ -36,6 +36,9 @@ LABEL org.opencontainers.image.source=https://github.com/csrakowski/FeedManager
 LABEL org.opencontainers.image.authors="https://github.com/csrakowski/"
 LABEL org.opencontainers.image.description="FeedManager Silo"
 LABEL org.opencontainers.image.licenses=MIT
+
+ENV CORECLR_ENABLE_PROFILING=1
+
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "FeedManager.Silo.dll"]
