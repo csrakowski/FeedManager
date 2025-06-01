@@ -14,7 +14,7 @@
         <h2 class="text-center">
             Page generated at: @DateTimeOffset.UtcNow.ToString("yyyy-MM-dd HH:mm") UTC
         </h2>
-        <button type="button" class="btn btn-default float-end" aria-label="Refresh" onclick="onClick_RefreshFeeds">
+        <button id="refreshFeeds" type="button" class="btn btn-default float-end" aria-label="Refresh">
             <i class="fa fa-sync" aria-hidden="true"></i>
         </button>
     </header>
@@ -47,6 +47,9 @@
 @section Scripts {
 
     <script>
+
+        $("#refreshFeeds").on("click", onClick_RefreshFeeds);
+
         function onClick_RefreshFeeds(e) {
             e.preventDefault();
 
