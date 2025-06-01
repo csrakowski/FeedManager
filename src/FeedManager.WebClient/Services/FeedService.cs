@@ -63,4 +63,33 @@ public class FeedService
     {
         return new[] { new FeedItem("Error", "Error", errorMessage, new Uri("#", UriKind.Relative), DateTimeOffset.UtcNow, new List<string>(0), "") };
     }
+
+    public async Task<(bool error, string message)> RefreshFeeds(string username, CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogDebug("Calling feed...");
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "feed/refreshfeed");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("UserId", username);
+
+            var response = await _httpClient.SendAsync(request, cancellationToken);
+
+            _logger.LogDebug("Got response with StatusCode: {StatusCode}", response.StatusCode);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                _logger.LogWarning("Message: {ResultMessage}", content);
+                return (true, content);
+            }
+
+            return (false, "");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception: {Exception}", ex);
+            return (true, ex.ToString());
+        }
+    }
 }

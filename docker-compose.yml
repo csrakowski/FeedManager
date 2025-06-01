@@ -95,7 +95,7 @@ services:
       retries: 3     # Retry 3 times before considering unhealthy
       
   krakend:
-    image: devopsfaith/krakend
+    image: krakend:latest
     volumes:
       - lv_krakend:/etc/krakend/
     ports:

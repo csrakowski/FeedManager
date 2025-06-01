@@ -14,6 +14,11 @@
         <h2 class="text-center">
             Page generated at: @DateTimeOffset.UtcNow.ToString("yyyy-MM-dd HH:mm") UTC
         </h2>
+        <button id="refreshFeeds" type="button" class="btn btn-default float-end" aria-label="Refresh">
+            <i class="fa fa-sync" aria-hidden="true"></i>
+        </button>
+
+        @Html.AntiForgeryToken()
     </header>
     
     <p>Got @Model.FeedItems.Length Messages</p>
@@ -24,7 +29,7 @@
             <div class="col-8 offset-2">
                 <article id="@feedItem.EncodedId" class="card">
                     <header class="card-header">
-                        <a class="card-title" href="@feedItem.ItemAlternateLink" target="_blank"><h2>@feedItem.Title</h2></a>
+                        <a class="card-title" href="@feedItem.ItemAlternateLink" target="_blank"><h2>@Html.Raw(feedItem.Title)</h2></a>
                     </header>
                     <div class="card-body">
                         <div class="card-text">
@@ -32,7 +37,7 @@
                         </div>
                     </div>
                     <footer class="card-footer text-muted text-right">
-                        <small>Published: @feedItem.PublishDate</small>
+                        <small>Published: @feedItem.PublishDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm") (@feedItem.PublishDate)</small>
                     </footer>
                 </article>
             </div>
@@ -40,3 +45,26 @@
     }
 
 </div>
+
+@section Scripts {
+    <script>
+        $("#refreshFeeds").on("click", onClick_RefreshFeeds);
+
+        function onClick_RefreshFeeds(e) {
+            e.preventDefault();
+
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/",
+                headers: {
+                    "RequestVerificationToken": token
+                }
+            }).done(() => {
+                window.location.reload();
+            });
+        }
+    </script>
+}
+

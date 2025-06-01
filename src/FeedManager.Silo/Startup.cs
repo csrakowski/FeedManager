@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT License.
 
+using FeedManager.Grains.Metrics;
 using FeedManager.Silo.Services.HealthCheck;
 using Serilog;
 
@@ -21,6 +22,8 @@ namespace FeedManager.Silo
                 var configuration = serviceProvider.GetRequiredService<IConfiguration>();
                 services.AddOpenTelemetryWithSharedConfiguration(Program.ServiceName, configuration, MassTransit.Logging.DiagnosticHeaders.DefaultListenerName);
             }
+
+            services.AddSingleton<FeedCounter>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

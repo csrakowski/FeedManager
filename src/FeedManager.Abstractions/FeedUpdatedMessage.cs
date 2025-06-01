@@ -5,7 +5,7 @@ namespace FeedManager.Abstractions;
 
 public class FeedUpdatedMessage
 {
-    public string FeedId { get; set; }
+    public required string FeedId { get; set; }
 
-    public string NotificationMessage { get; set; }
+    public required string NotificationMessage { get; set; }
 }

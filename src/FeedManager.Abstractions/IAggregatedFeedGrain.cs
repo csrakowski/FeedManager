@@ -16,5 +16,6 @@ namespace FeedManager.Abstractions
         Task<IEnumerable<FeedSubscription>> GetSubscriptions();
         Task AddNewFeedItemsAsync(IEnumerable<FeedItem> feedItems);
         Task<IEnumerable<FeedItem>> GetAggregatedFeedAsync();
+        Task RefreshAggregatedFeedAsync();
     }
 }

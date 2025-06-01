@@ -55,5 +55,12 @@ namespace FeedManager.Silo.Services
 
             return result;
         }
+
+        public Task RefreshAggregatedFeedAsync(string userId)
+        {
+            var aggregatedFeedGrain = GetGrain<IAggregatedFeedGrain>(userId);
+
+            return aggregatedFeedGrain.RefreshAggregatedFeedAsync();
+        }
     }
 }
