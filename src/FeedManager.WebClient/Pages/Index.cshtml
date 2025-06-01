@@ -27,7 +27,7 @@
             <div class="col-8 offset-2">
                 <article id="@feedItem.EncodedId" class="card">
                     <header class="card-header">
-                        <a class="card-title" href="@feedItem.ItemAlternateLink" target="_blank"><h2>@feedItem.Title</h2></a>
+                        <a class="card-title" href="@feedItem.ItemAlternateLink" target="_blank"><h2>@Html.Raw(feedItem.Title)</h2></a>
                     </header>
                     <div class="card-body">
                         <div class="card-text">

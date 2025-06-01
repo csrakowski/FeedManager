@@ -9,7 +9,6 @@ using Orleans;
 using System.ServiceModel.Syndication;
 using System.Xml;
 using System;
-using System.Reflection.Metadata;
 using Microsoft.Extensions.Logging;
 using CSRakowski.Parallel;
 using FeedManager.Grains.Metrics;
@@ -22,7 +21,7 @@ namespace FeedManager.Grains
         private readonly IPersistentState<FeedGrainState> _state;
         private readonly FeedCounter _feedCounter;
 
-        private IDisposable? _timerHandle;
+        private IGrainTimer? _timerHandle;
 
         public FeedGrain(
             ILogger<FeedGrain> logger,
@@ -39,10 +38,13 @@ namespace FeedManager.Grains
 
         public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
-            _timerHandle = RegisterTimer(callback: PollFeedAsync,
-                                         state: new Object(),
-                                         dueTime: TimeSpan.FromSeconds(15),
-                                         period: TimeSpan.FromMinutes(15));
+            _timerHandle = this.RegisterGrainTimer(callback: PollFeedAsync,
+                                    options: new GrainTimerCreationOptions
+                                    {
+                                        DueTime = TimeSpan.FromSeconds(15),
+                                        Period = TimeSpan.FromMinutes(15),
+                                        KeepAlive = true
+                                    });
 
             return Task.CompletedTask;
         }
@@ -100,14 +102,20 @@ namespace FeedManager.Grains
         {
             _logger?.LogDebug("{method}", nameof(TriggerFeedRefresh));
 
-            return PollFeedAsync(null!);
+            return PollFeedAsync(CancellationToken.None);
         }
 
-        private async Task PollFeedAsync(object arg)
+        private async Task PollFeedAsync(CancellationToken cancellationToken)
         {
             var feedUrl = this.GetPrimaryKeyString();
 
             _logger?.LogDebug("{method}: {feedUrl}", nameof(PollFeedAsync), feedUrl);
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _logger?.LogDebug("{method}: {feedUrl} was cancelled", nameof(PollFeedAsync), feedUrl);
+                return;
+            }
 
             _feedCounter.CountFeedRefresh(feedUrl);
 
@@ -137,7 +145,7 @@ namespace FeedManager.Grains
             if (newFeedItems.Count > 0)
             {
                 await SendUpdateAsync(newFeedItems);
-                await _state.WriteStateAsync();
+                await _state.WriteStateAsync(cancellationToken);
             }
         }
 
