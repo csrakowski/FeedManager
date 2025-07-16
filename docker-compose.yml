@@ -78,7 +78,7 @@ services:
       retries: 3     # Retry 3 times before considering unhealthy
 
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:management
     volumes:
       - lv_rabbitmq_etc:/etc/rabbitmq
       - lv_rabbitmq_var:/var/lib/rabbitmq
@@ -93,7 +93,7 @@ services:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q status"]
       interval: 10s  # Check every 10 seconds
       retries: 3     # Retry 3 times before considering unhealthy
-      
+
   krakend:
     image: krakend:latest
     volumes:
