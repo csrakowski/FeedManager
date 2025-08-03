@@ -10,7 +10,6 @@ using System.ServiceModel.Syndication;
 using System.Xml;
 using System;
 using System.Text;
-using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using FeedManager.Grains.Metrics;
@@ -22,7 +21,6 @@ namespace FeedManager.Grains
     {
         private readonly ILogger<AggregatedFeedGrain> _logger;
         private readonly IPersistentState<AggregatedFeedGrainState> _state;
-        private readonly IPublishEndpoint _publishEndpoint;
         private readonly FeedCounter _feedCounter;
 
         public AggregatedFeedGrain(
@@ -31,12 +29,10 @@ namespace FeedManager.Grains
             stateName: "AggregatedFeed",
             storageName: "feedmanager")]
             IPersistentState<AggregatedFeedGrainState> state,
-            IPublishEndpoint publishEndpoint,
             FeedCounter feedCounter)
         {
             _logger = logger;
             _state = state;
-            _publishEndpoint = publishEndpoint;
             _feedCounter = feedCounter;
         }
 
@@ -144,8 +140,6 @@ namespace FeedManager.Grains
             var logMessage = sb.ToString();
 
             _logger?.LogDebug("{notificationMessage}", logMessage);
-
-            await _publishEndpoint.Publish(new FeedUpdatedMessage { FeedId = IdentityString, NotificationMessage = logMessage });
         }
 
         public Task<IEnumerable<FeedItem>> GetAggregatedFeedAsync()

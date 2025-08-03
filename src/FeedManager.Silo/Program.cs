@@ -1,16 +1,15 @@
 using System;
 using FeedManager.Silo.StartupTasks;
-using MassTransit;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using Orleans;
 using Orleans.Hosting;
-using Orleans.Runtime;
-using Orleans.Runtime.Development;
 using Orleans.Persistence;
 using Orleans.Persistence.Redis;
-using StackExchange.Redis;
+using Orleans.Runtime;
+using Orleans.Runtime.Development;
 using Serilog;
+using StackExchange.Redis;
 
 namespace FeedManager.Silo
 {
@@ -75,24 +74,6 @@ namespace FeedManager.Silo
                                 .Enrich.FromLogContext()
                                 .WriteTo.Console()
                         )
-                        .UseMassTransit((ctx, config) =>
-                        {
-                            config.UsingRabbitMq((context, cfg) =>
-                            {
-                                cfg.Host(
-                                    host: ctx.Configuration.GetValue<string>("RABBITMQ_URL"),
-                                    port: ctx.Configuration.GetValue<ushort>("RABBITMQ_PORT"),
-                                    virtualHost: ctx.Configuration.GetValue<string>("RABBITMQ_VIRTUALHOST"),
-                                    configure: c =>
-                                    {
-                                        c.Username(ctx.Configuration.GetValue<string>("RABBITMQ_USER"));
-                                        c.Password(ctx.Configuration.GetValue<string>("RABBITMQ_PASSWORD"));
-                                    });
-
-
-                                cfg.ConfigureEndpoints(context);
-                            });
-                        })
                         .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
         }
     }

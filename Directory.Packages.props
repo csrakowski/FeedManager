@@ -5,8 +5,6 @@
   <ItemGroup>
     <PackageVersion Include="Azure.Identity" Version="1.14.2" />
     <PackageVersion Include="CSRakowski.ParallelAsync" Version="1.8.0" />
-    <PackageVersion Include="MassTransit.Abstractions" Version="8.5.1" />
-    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.5.1" />
     <PackageVersion Include="Microsoft.Orleans.Persistence.AdoNet" Version="9.2.1" />
     <PackageVersion Include="Microsoft.Orleans.Persistence.Memory" Version="9.2.1" />
     <PackageVersion Include="Microsoft.Orleans.Persistence.Redis" Version="9.2.1" />

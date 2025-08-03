@@ -11,11 +11,6 @@ services:
       - "8443:443"
     environment:
       REDIS_URL: "redis:${REDIS_PORT}"
-      RABBITMQ_URL: "rabbitmq"
-      RABBITMQ_PORT: ${RABBITMQ_PORT}
-      RABBITMQ_VIRTUALHOST: "/"
-      RABBITMQ_USER: "${RABBITMQ_USER}"
-      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel_collector:4317"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
@@ -26,8 +21,6 @@ services:
       start_interval: 5s
     depends_on:
       redis:
-        condition: service_healthy
-      rabbitmq:
         condition: service_healthy
       otel_collector:
         condition: service_started
@@ -44,11 +37,6 @@ services:
       - "5443:443"
     environment:
       REDIS_URL: "redis:${REDIS_PORT}"
-      RABBITMQ_URL: "rabbitmq"
-      RABBITMQ_PORT: ${RABBITMQ_PORT}
-      RABBITMQ_VIRTUALHOST: "/"
-      RABBITMQ_USER: "${RABBITMQ_USER}"
-      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD}"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel_collector:4317"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
@@ -58,7 +46,7 @@ services:
       start_period: 15s
       start_interval: 5s
     depends_on:
-      rabbitmq:
+      redis:
         condition: service_healthy
       otel_collector:
         condition: service_started
@@ -74,23 +62,6 @@ services:
       REDIS_ARGS: "--appendonly yes --save 60 1"
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
-      interval: 10s  # Check every 10 seconds
-      retries: 3     # Retry 3 times before considering unhealthy
-
-  rabbitmq:
-    image: rabbitmq:management
-    volumes:
-      - lv_rabbitmq_etc:/etc/rabbitmq
-      - lv_rabbitmq_var:/var/lib/rabbitmq
-    ports:
-      - "${RABBITMQ_PORT}:5672"
-      - "15692:15692"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER}"
-      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD}"
-    healthcheck:
-      test: ["CMD-SHELL", "rabbitmq-diagnostics -q status"]
       interval: 10s  # Check every 10 seconds
       retries: 3     # Retry 3 times before considering unhealthy
 
@@ -161,8 +132,6 @@ services:
 
 volumes:
   lv_redis: {}
-  lv_rabbitmq_etc: {}
-  lv_rabbitmq_var: {}
   lv_silo: {}
   lv_webclient: {}
   lv_krakend: {}
