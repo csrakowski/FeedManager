@@ -11,7 +11,8 @@ services:
       - "8443:443"
     environment:
       REDIS_URL: "redis:${REDIS_PORT}"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel_collector:4317"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otlp:4317"
+      OTEL_METRIC_EXPORT_INTERVAL: 5000 # so we don't have to wait 60s for metrics
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
       interval: 30s
@@ -22,8 +23,15 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      otel_collector:
+      otlp:
         condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    mem_limit: 512m
+    cpus: 0.5
 
   feedmanager.webclient:
     image: csrakowski/feedmanagerwebclient
@@ -37,7 +45,8 @@ services:
       - "5443:443"
     environment:
       REDIS_URL: "redis:${REDIS_PORT}"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel_collector:4317"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otlp:4317"
+      OTEL_METRIC_EXPORT_INTERVAL: 5000 # so we don't have to wait 60s for metrics
     healthcheck:
       test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
       interval: 30s
@@ -48,8 +57,15 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      otel_collector:
+      otlp:
         condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    mem_limit: 512m
+    cpus: 0.5
 
   redis:
     image: redis/redis-stack:latest
@@ -64,6 +80,13 @@ services:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       interval: 10s  # Check every 10 seconds
       retries: 3     # Retry 3 times before considering unhealthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    mem_limit: 512m
+    cpus: 0.5
 
   krakend:
     image: krakend:latest
@@ -82,52 +105,37 @@ services:
     depends_on:
       feedmanager.silo:
         condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+    mem_limit: 256m
+    cpus: 0.25
 
-  jaeger:
-    image: jaegertracing/all-in-one:latest
+  otlp:
+    image: "grafana/otel-lgtm"
     volumes:
-      - lv_jaeger_etc:/etc/jaeger
+      - lv_otlp_data:/data/
+      #- ./configs/otel-collector-config-connector.yml:/etc/otelcol/otel-collector-config.yml
+      #- "./configs/prometheus.yml:/etc/prometheus/prometheus.yml"
+      #- ./configs/grafana.ini:/etc/grafana/grafana.ini
+      #- ./configs/grafana_datasource.yml:/etc/grafana/provisioning/datasources/datasource.yaml
+    #environment:
+      #- GF_AUTH_ANONYMOUS_ENABLED=true
+      #- GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      #- GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
       - "4317:4317"
-      - "16686:16686"
-    environment:
-      - METRICS_STORAGE_TYPE=prometheus
-      - PROMETHEUS_SERVER_URL=http://prometheus:9090
-      - PROMETHEUS_QUERY_SUPPORT_SPANMETRICS_CONNECTOR=true
-      - PROMETHEUS_QUERY_NAMESPACE=
-      - PROMETHEUS_QUERY_DURATION_UNIT=
-      - PROMETHEUS_QUERY_NORMALIZE_CALLS=true
-      - PROMETHEUS_QUERY_NORMALIZE_DURATION=true
-
-  otel_collector:
-    image: otel/opentelemetry-collector-contrib:latest
-    #0.89.0
-    volumes:
-      - ./configs/otel-collector-config-connector.yml:/etc/otelcol/otel-collector-config.yml
-    command: --config /etc/otelcol/otel-collector-config.yml
-    depends_on:
-      jaeger:
-        condition: service_started
-
-  prometheus:
-    image: prom/prometheus:latest
-    volumes:
-      - "./configs/prometheus.yml:/etc/prometheus/prometheus.yml"
-    ports:
-      - "9090:9090"
-
-  grafana:
-    image: grafana/grafana:latest
-    volumes:
-      - ./configs/grafana.ini:/etc/grafana/grafana.ini
-      - ./configs/grafana_datasource.yml:/etc/grafana/provisioning/datasources/datasource.yaml
-    environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_AUTH_DISABLE_LOGIN_FORM=true
-    ports:
-      - 3000:3000
-
+      - "3000:3000"
+      - "4318:4318"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    mem_limit: 1G
+    cpus: 0.5
 
 
 volumes:
@@ -135,4 +143,4 @@ volumes:
   lv_silo: {}
   lv_webclient: {}
   lv_krakend: {}
-  lv_jaeger_etc: {}
+  lv_otlp_data: {}

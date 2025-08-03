@@ -53,6 +53,8 @@
         function onClick_RefreshFeeds(e) {
             e.preventDefault();
 
+            $("#refreshFeeds").addClass("spin");
+
             var token = $('input[name="__RequestVerificationToken"]').val();
 
             $.ajax({
