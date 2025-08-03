@@ -21,7 +21,7 @@ COPY ["src/FeedManager.Shared/FeedManager.Shared.csproj", "src/FeedManager.Share
 RUN dotnet restore "src/FeedManager.Silo/FeedManager.Silo.csproj"
 COPY . .
 WORKDIR "/src/src/FeedManager.Silo"
-RUN dotnet build "FeedManager.Silo.csproj" -c Release -o /app/build
+RUN dotnet build "FeedManager.Silo.csproj" -c Release --no-restore -o /app/build
 
 
 

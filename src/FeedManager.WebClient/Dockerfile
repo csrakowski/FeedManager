@@ -18,7 +18,7 @@ COPY ["src/FeedManager.Shared/FeedManager.Shared.csproj", "src/FeedManager.Share
 RUN dotnet restore "src/FeedManager.WebClient/FeedManager.WebClient.csproj"
 COPY . .
 WORKDIR "/src/src/FeedManager.WebClient"
-RUN dotnet build "FeedManager.WebClient.csproj" -c Release -o /app/build
+RUN dotnet build "FeedManager.WebClient.csproj" -c Release --no-restore -o /app/build
 
 
 FROM build AS publish
