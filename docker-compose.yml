@@ -68,7 +68,7 @@ services:
     cpus: 0.5
 
   redis:
-    image: redis/redis-stack:latest
+    image: redis:alpine
     volumes:
       - lv_redis:/data/
     ports:
@@ -80,6 +80,31 @@ services:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       interval: 10s  # Check every 10 seconds
       retries: 3     # Retry 3 times before considering unhealthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    mem_limit: 512m
+    cpus: 0.5
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    ports:
+      - "5540:5540"
+    environment:
+      RI_REDIS_HOST: redis
+      RI_REDIS_PORT: "${REDIS_PORT}"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider --no-check-certificate http://localhost:5540/api/health/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+      start_interval: 5s
+    depends_on:
+      redis:
+        condition: service_started
     deploy:
       resources:
         limits:
