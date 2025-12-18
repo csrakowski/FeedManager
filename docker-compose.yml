@@ -126,7 +126,7 @@ services:
         cpus: 0.5
 
     traefik:
-        image: traefik:v3.1
+        image: traefik:v3
         command:
             - "--api.insecure=true"
             - "--api.dashboard=true"
