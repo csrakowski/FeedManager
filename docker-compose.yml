@@ -12,7 +12,7 @@ services:
             OTEL_EXPORTER_OTLP_ENDPOINT: "http://otlp:4317"
             OTEL_METRIC_EXPORT_INTERVAL: 5000 # so we don't have to wait 60s for metrics
         healthcheck:
-            test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
+            test: wget --no-verbose --tries=1 --spider http://localhost/healthCheck || exit 1
             interval: 30s
             timeout: 10s
             retries: 3
@@ -34,9 +34,9 @@ services:
             - "traefik.enable=true"
             - "traefik.http.routers.silo.rule=PathPrefix(`/Feed`)"
             - "traefik.http.routers.silo.priority=10"
-            - "traefik.http.routers.silo.entrypoints=websecure"
-            - "traefik.http.services.silo.loadbalancer.server.port=443"
-            - "traefik.http.services.silo.loadbalancer.server.scheme=https"
+            - "traefik.http.routers.silo.entrypoints=web"
+            - "traefik.http.services.silo.loadbalancer.server.port=80"
+            - "traefik.http.services.silo.loadbalancer.server.scheme=http"
 
     feedmanager.webclient:
         image: csrakowski/feedmanagerwebclient
@@ -47,13 +47,13 @@ services:
         volumes:
             - lv_webclient:/var/log/
         ports:
-            - "5443:443"
+            - "5080:80"
         environment:
             REDIS_URL: "redis:${REDIS_PORT}"
             OTEL_EXPORTER_OTLP_ENDPOINT: "http://otlp:4317"
             OTEL_METRIC_EXPORT_INTERVAL: 5000 # so we don't have to wait 60s for metrics
         healthcheck:
-            test: wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost/healthCheck || exit 1
+            test: wget --no-verbose --tries=1 --spider http://localhost/healthCheck || exit 1
             interval: 30s
             timeout: 10s
             retries: 3
@@ -75,9 +75,9 @@ services:
             - "traefik.enable=true"
             - "traefik.http.routers.webclient.rule=PathPrefix(`/`)"
             - "traefik.http.routers.webclient.priority=1"
-            - "traefik.http.routers.webclient.entrypoints=websecure"
-            - "traefik.http.services.webclient.loadbalancer.server.port=443"
-            - "traefik.http.services.webclient.loadbalancer.server.scheme=https"
+            - "traefik.http.routers.webclient.entrypoints=web"
+            - "traefik.http.services.webclient.loadbalancer.server.port=80"
+            - "traefik.http.services.webclient.loadbalancer.server.scheme=http"
 
     redis:
         image: redis:alpine
