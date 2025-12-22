@@ -3,6 +3,7 @@
 
 using FeedManager.Shared;
 using FeedManager.WebClient.Services;
+using FeedManager.WebClient.Services.HealthCheck;
 using Microsoft.Extensions.Configuration;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -51,7 +52,8 @@ public static class Program
                             }
                         });
 
-        builder.Services.AddHealthChecks();
+        builder.Services.AddHealthChecks()
+                    .AddCheck<FeedServiceHealthCheck>("feedServiceHealthCheck", Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded);
 
         builder.Host.UseSerilog((context, services, configuration) => configuration
                     .ReadFrom.Configuration(context.Configuration)
