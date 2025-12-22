@@ -33,12 +33,10 @@ namespace FeedManager.Silo
             else
             {
                 app.UseExceptionHandler("/Error");
-                app.UseHsts();
             }
 
             app.UseApplicationLifetimeLinkedCancellationToken();
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
 
