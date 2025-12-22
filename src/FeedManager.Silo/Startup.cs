@@ -17,11 +17,7 @@ namespace FeedManager.Silo
             services.AddHealthChecks()
                     .AddCheck<SiloHealthCheck>("siloHealthCheck");
 
-            using (var serviceProvider = services.BuildServiceProvider())
-            {
-                var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-                services.AddOpenTelemetryWithSharedConfiguration(Program.ServiceName, configuration);
-            }
+            services.AddOpenTelemetryWithSharedConfiguration(Program.ServiceName);
 
             services.AddSingleton<FeedCounter>();
         }

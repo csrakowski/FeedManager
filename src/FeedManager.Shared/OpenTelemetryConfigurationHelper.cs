@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,20 +17,18 @@ namespace FeedManager.Shared;
 
 public static class OpenTelemetryConfigurationHelper
 {
-    public static ILoggingBuilder AddOpenTelemetryWithSharedConfiguration(this ILoggingBuilder loggingBuilder, string serviceName, IConfiguration configuration)
+    public static ILoggingBuilder AddOpenTelemetryWithSharedConfiguration(this ILoggingBuilder loggingBuilder, string serviceName)
     {
         return loggingBuilder.AddOpenTelemetry(options =>
         {
             var resourceBuilder = ResourceBuilder.CreateDefault().AddService(serviceName);
             options.SetResourceBuilder(resourceBuilder)
                     //.AddConsoleExporter()
-                    .AddOtlpExporter(conf => {
-                        ConfigureOtlpExporter(conf, configuration);
-                    });
+                    .AddOtlpExporter();
         });
     }
 
-    public static IOpenTelemetryBuilder AddOpenTelemetryWithSharedConfiguration(this IServiceCollection services, string serviceName, IConfiguration configuration, params string[] additionalTracingSources)
+    public static IOpenTelemetryBuilder AddOpenTelemetryWithSharedConfiguration(this IServiceCollection services, string serviceName, params string[] additionalTracingSources)
     {
         return services.AddOpenTelemetry()
                         .ConfigureResource(resource => resource.AddService(serviceName))
@@ -44,32 +43,14 @@ public static class OpenTelemetryConfigurationHelper
                                     tracing.AddSource(additionalTracingSources);
                                 }
 
-                                tracing.AddOtlpExporter(conf =>
-                                {
-                                    ConfigureOtlpExporter(conf, configuration);
-                                });
+                                tracing.AddOtlpExporter();
                         })
                         .WithMetrics(metrics => metrics
                             .AddRuntimeInstrumentation()
                             .AddAspNetCoreInstrumentation()
                             .AddHttpClientInstrumentation()
                             //.AddConsoleExporter()
-                            .AddOtlpExporter(conf => {
-                                ConfigureOtlpExporter(conf, configuration);
-                            })
+                            .AddOtlpExporter()
                         );
-    }
-
-    private static void ConfigureOtlpExporter(OtlpExporterOptions otlpExporterOptions, IConfiguration configuration)
-    {
-        if (configuration is not null)
-        {
-            var otlpEndpoint = configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
-
-            if (!String.IsNullOrEmpty(otlpEndpoint))
-            {
-                otlpExporterOptions.Endpoint = new Uri(otlpEndpoint);
-            }
-        }
     }
 }

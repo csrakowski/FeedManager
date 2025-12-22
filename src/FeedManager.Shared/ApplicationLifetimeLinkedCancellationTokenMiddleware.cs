@@ -4,8 +4,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Globalization;
-using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FeedManager.Shared;
 
