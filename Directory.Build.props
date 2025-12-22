@@ -4,9 +4,9 @@
         <Copyright>Christiaan Rakowski - 2017-2025</Copyright>
         <Version>1.0</Version>
         <LangVersion>latest</LangVersion>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
-        <ImplicitUsings>disable</ImplicitUsings>
+        <ImplicitUsings>true</ImplicitUsings>
     </PropertyGroup>
 
     <PropertyGroup>

@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Azure.Identity" Version="1.17.0" />
+    <PackageVersion Include="Azure.Identity" Version="1.17.1" />
     <PackageVersion Include="CSRakowski.ParallelAsync" Version="1.8.0" />
     <PackageVersion Include="Microsoft.Orleans.Persistence.AdoNet" Version="9.2.1" />
     <PackageVersion Include="Microsoft.Orleans.Persistence.Memory" Version="9.2.1" />
@@ -19,7 +19,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.14.0" />
     <PackageVersion Include="OrleansDashboard" Version="8.2.0" />
-    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
-    <PackageVersion Include="System.ServiceModel.Syndication" Version="10.0.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageVersion Include="System.ServiceModel.Syndication" Version="10.0.1" />
   </ItemGroup>
 </Project>
