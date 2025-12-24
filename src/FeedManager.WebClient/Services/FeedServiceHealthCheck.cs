@@ -21,15 +21,21 @@ internal class FeedServiceHealthCheck : IHealthCheck
     {
         try
         {
-            var grain = await _feedService.Get("Chris", cancellationToken);
+            var isHealthy = await _feedService.HealthCheck(cancellationToken);
 
-            return HealthCheckResult.Healthy("A healthy result.");
+            if (isHealthy)
+            {
+                return HealthCheckResult.Healthy("FeedService is available.");
+            }
+            else
+            {
+                return HealthCheckResult.Degraded("FeedService is not available.");
+            }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception occured during FeedService HealthCheck");
+            return new HealthCheckResult(context.Registration.FailureStatus, "An exception occurred during health check.", ex);
         }
-
-        return new HealthCheckResult(context.Registration.FailureStatus, "An unhealthy result.");
     }
 }

@@ -92,4 +92,34 @@ public class FeedService
             return (true, ex.ToString());
         }
     }
+
+    public async Task<bool> HealthCheck(CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogDebug("Calling healthcheck...");
+
+            var response = await _httpClient.GetAsync("healthCheck", cancellationToken);
+
+            _logger.LogDebug("Got response with StatusCode: {StatusCode}", response.StatusCode);
+
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _logger.LogDebug("HealthCheck succeeded: {HealthCheckResponse}", content);
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning("HealthCheck failed: {HealthCheckResponse}", content);
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("HealthCheck Exception: {Exception}", ex);
+            return false;
+        }
+    }
 }
