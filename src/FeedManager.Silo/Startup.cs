@@ -4,6 +4,7 @@
 using FeedManager.Grains.Metrics;
 using FeedManager.Silo.Services.HealthCheck;
 using Serilog;
+using Orleans.Dashboard;
 
 namespace FeedManager.Silo
 {
@@ -42,10 +43,9 @@ namespace FeedManager.Silo
 
             app.UseHealthChecks("/healthCheck");
 
-            app.Map("/dashboard", x => x.UseOrleansDashboard());
-
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapOrleansDashboard("/dashboard");
                 endpoints.MapControllers();
             });
         }

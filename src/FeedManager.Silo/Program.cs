@@ -3,6 +3,7 @@ using FeedManager.Silo.StartupTasks;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using Orleans;
+using Orleans.Dashboard;
 using Orleans.Hosting;
 using Orleans.Persistence;
 using Orleans.Persistence.Redis;
@@ -34,12 +35,12 @@ namespace FeedManager.Silo
         private static IHostBuilder BuildHost(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                        .UseOrleans((context, builder) =>
+                        .UseOrleans(builder =>
                         {
                             builder.UseLocalhostClustering()
                                 .AddRedisGrainStorage("feedmanager", o =>
                                 {
-                                    var redisEndpoint = context.Configuration["REDIS_URL"];
+                                    var redisEndpoint = builder.Configuration["REDIS_URL"];
 
                                     if (String.IsNullOrEmpty(redisEndpoint))
                                     {
@@ -65,7 +66,7 @@ namespace FeedManager.Silo
 
                             builder.UseInMemoryReminderService();
 
-                            builder.UseDashboard();
+                            builder.AddDashboard();
                         })
                         .UseSerilog((context, services, configuration) =>
                             configuration

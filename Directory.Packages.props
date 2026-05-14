@@ -3,23 +3,23 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Azure.Identity" Version="1.17.1" />
+    <PackageVersion Include="Azure.Identity" Version="1.21.0" />
     <PackageVersion Include="CSRakowski.ParallelAsync" Version="1.8.0" />
-    <PackageVersion Include="Microsoft.Orleans.Persistence.AdoNet" Version="9.2.1" />
-    <PackageVersion Include="Microsoft.Orleans.Persistence.Memory" Version="9.2.1" />
-    <PackageVersion Include="Microsoft.Orleans.Persistence.Redis" Version="9.2.1" />
-    <PackageVersion Include="Microsoft.Orleans.Runtime" Version="9.2.1" />
-    <PackageVersion Include="Microsoft.Orleans.Sdk" Version="9.2.1" />
-    <PackageVersion Include="Microsoft.Orleans.Server" Version="9.2.1" />
-    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.14.0" />
-    <PackageVersion Include="OrleansDashboard" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Dashboard" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.Orleans.Persistence.AdoNet" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.Orleans.Persistence.Memory" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.Orleans.Persistence.Redis" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.Orleans.Runtime" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.Orleans.Sdk" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.Orleans.Server" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.15.3" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.15.3" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
     <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
-    <PackageVersion Include="System.ServiceModel.Syndication" Version="10.0.1" />
+    <PackageVersion Include="System.ServiceModel.Syndication" Version="10.0.8" />
   </ItemGroup>
 </Project>

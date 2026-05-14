@@ -23,7 +23,6 @@ public static class OpenTelemetryConfigurationHelper
         {
             var resourceBuilder = ResourceBuilder.CreateDefault().AddService(serviceName);
             options.SetResourceBuilder(resourceBuilder)
-                    //.AddConsoleExporter()
                     .AddOtlpExporter();
         });
     }
@@ -49,7 +48,6 @@ public static class OpenTelemetryConfigurationHelper
                             .AddRuntimeInstrumentation()
                             .AddAspNetCoreInstrumentation()
                             .AddHttpClientInstrumentation()
-                            //.AddConsoleExporter()
                             .AddOtlpExporter()
                         );
     }
