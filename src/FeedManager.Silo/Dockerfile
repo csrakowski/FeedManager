@@ -39,6 +39,8 @@ LABEL org.opencontainers.image.licenses=MIT
 
 ENV CORECLR_ENABLE_PROFILING=1
 
+USER $APP_UID
+
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "FeedManager.Silo.dll"]
