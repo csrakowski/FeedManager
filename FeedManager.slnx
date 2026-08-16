@@ -1,0 +1,33 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="build.bat" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/">
+    <File Path=".github/dependabot.yml" />
+    <File Path=".github/FUNDING.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/workflows/">
+    <File Path=".github/workflows/docker-image.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/configs/">
+    <File Path="configs/grafana.ini" />
+    <File Path="configs/grafana_datasource.yml" />
+    <File Path="configs/otel-collector-config-connector.yml" />
+    <File Path="configs/prometheus.yml" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+  <Project Path="src/FeedManager.Abstractions/FeedManager.Abstractions.csproj" />
+  <Project Path="src/FeedManager.Grains/FeedManager.Grains.csproj" />
+  <Project Path="src/FeedManager.Shared/FeedManager.Shared.csproj" />
+  <Project Path="src/FeedManager.Silo/FeedManager.Silo.csproj" />
+  <Project Path="src/FeedManager.WebClient/FeedManager.WebClient.csproj" />
+</Solution>
