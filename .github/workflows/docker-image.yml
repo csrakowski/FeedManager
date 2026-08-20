@@ -18,8 +18,6 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    # Uses the `docker/login-action` action to log in to the Container registry registry using the account and password that will publish the packages.
-    # Once published, the packages are scoped to the account defined here.
     - name: Log in to the Container registry
       uses: docker/login-action@v4
       with:
@@ -27,8 +25,30 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build the Docker image for FeedManager.Silo
-      run: docker build --no-cache . --file src/FeedManager.Silo/Dockerfile --tag ${{ env.REGISTRY }}/csrakowski/feedmanagersilo:$(date +%s) --tag ${{ env.REGISTRY }}/csrakowski/feedmanagersilo:latest --push
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v4
 
-    - name: Build the Docker image for FeedManager.WebClient
-      run: docker build --no-cache . --file src/FeedManager.WebClient/Dockerfile --tag ${{ env.REGISTRY }}/csrakowski/feedmanagerweb:$(date +%s) --tag ${{ env.REGISTRY }}/csrakowski/feedmanagerweb:latest --push
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v4
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v7
+      with:
+        context: ./src/FeedManager.Silo/
+        platforms: linux/amd64,linux/arm64
+        push: ${{ github.event_name == 'push' }}
+        no-cache: true
+        tags: |
+          ${{ env.REGISTRY }}/csrakowski/feedmanagersilo:latest
+          ${{ env.REGISTRY }}/csrakowski/feedmanagersilo:${{ github.sha }}
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v7
+      with:
+        context: ./src/FeedManager.WebClient/
+        platforms: linux/amd64,linux/arm64
+        push: ${{ github.event_name == 'push' }}
+        no-cache: true
+        tags: |
+          ${{ env.REGISTRY }}/csrakowski/feedmanagerweb:latest
+          ${{ env.REGISTRY }}/csrakowski/feedmanagerweb:${{ github.sha }}
