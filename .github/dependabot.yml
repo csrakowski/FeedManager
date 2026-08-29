@@ -9,7 +9,7 @@ updates:
     groups:
       orleans-packages:
         patterns:
-          - "Orleans.*"
+          - "Microsoft.Orleans.*"
       system-packages:
         patterns:
           - "System.*"
