@@ -10,6 +10,9 @@ updates:
       orleans-packages:
         patterns:
           - "Microsoft.Orleans.*"
+      opentelemetry-packages:
+        patterns:
+          - "OpenTelemetry.*"
       system-packages:
         patterns:
           - "System.*"
